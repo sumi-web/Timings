@@ -1,0 +1,16 @@
+.login-screen {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.login-screen > .input-field {
+}
+
+.avatar-icon {
+	height: 80px !important;
+	width: 80px !important;
+	margin-bottom: 1rem;
+}

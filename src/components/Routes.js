@@ -4,7 +4,7 @@ import history from "../history";
 import Home from "./Home";
 import loadingScreen from "./loading-screen/loadingScreen";
 import Login from "./login-screen/Login";
-import Register from "./Register";
+import Register from "./login-screen/Register";
 
 const Routes = ({ userData }) => {
 	return (

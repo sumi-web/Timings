@@ -1,0 +1,23 @@
+.login-screen {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.form-box {
+	margin-bottom: 1rem !important;
+}
+
+.sign-in-btn {
+	margin-top: 2rem !important;
+	margin-bottom: 1rem !important;
+}
+
+.avatar-icon {
+	height: 100px !important;
+	width: 100px !important;
+	margin-bottom: 1rem;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

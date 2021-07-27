@@ -1,18 +1,25 @@
 import React from "react";
-import { Switch, Route, BrowserRouter } from "react-router-dom";
+import { Switch, Route, Router } from "react-router-dom";
+import history from "../history";
 import Home from "./Home";
-import Login from "./Login";
-import Register from "./Register";
+import loadingScreen from "./loading-screen/loadingScreen";
+import Login from "./login-screen/Login";
+import Register from "./login-screen/Register";
 
-const Routes = () => {
+const Routes = ({ userData }) => {
 	return (
-		<BrowserRouter>
+		<Router history={history}>
 			<Switch>
-				<Route path="/login" component={Login} />
+				{userData === null ? (
+					<Route exact path="/" component={loadingScreen} />
+				) : !!userData && userData.name ? (
+					<Route path="/home" component={Home} />
+				) : (
+					<Route path="/login" component={Login} />
+				)}
 				<Route path="/register" component={Register} />
-				<Route path="/home" component={Home} />
 			</Switch>
-		</BrowserRouter>
+		</Router>
 	);
 };
 

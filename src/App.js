@@ -7,19 +7,26 @@ import history from "./history";
 
 const theme = {
 	colors: {
-		primary: "#54436b",
+		primary: "#512D6D",
 		secondary: "#a03c78",
 		third: "#93d9a3",
-		lightYellow: "#cdf3a2;",
 		orange: "#ed8e7c",
-	},
-
-	grey: {
+		reddish: "#F8485E",
+		blue: "#00C1D4",
+		white: "#fff",
+		red: "#c80000",
 		100: "#EAEAEA",
 		200: "#C9C5C5",
 		300: "#888",
 		400: "#666",
+		500: "#444",
+		600: "#434343",
+		700: "#333",
+		800: "#232323",
+		900: "#222",
+		1000: "#111",
 	},
+
 	breakPoints: {
 		vs: "476px",
 		sm: "576px",
@@ -50,6 +57,21 @@ const theme = {
 		0: "none",
 		1: "0px 5px 10px rgba(0, 0, 0, 0.12)",
 		2: "0px 8px 30px rgba(0, 0, 0, 0.24)",
+	},
+
+	widthSize: {
+		col_1: "8.33%",
+		col_2: "16.66%",
+		col_3: "25%",
+		col_4: "33.33%",
+		col_5: "41.66%",
+		col_6: "50%",
+		col_7: "58.33%",
+		col_8: "66.66%",
+		col_9: "75%",
+		col_10: "83.33%",
+		col_11: "91.66%",
+		col_12: "100%",
 	},
 };
 
@@ -87,18 +109,10 @@ export const App = () => {
 };
 
 // min width 970px screen size larger than 970
-// max width  970px screen smaller than
+// max width  970px screen smaller than 970
+
 /**
- * .col-1 {width: 8.33%;}
-.col-2 {width: 16.66%;}
-.col-3 {width: 25%;}
-.col-4 {width: 33.33%;}
-.col-5 {width: 41.66%;}
-.col-6 {width: 50%;}
-.col-7 {width: 58.33%;}
-.col-8 {width: 66.66%;}
-.col-9 {width: 75%;}
-.col-10 {width: 83.33%;}
-.col-11 {width: 91.66%;}
-.col-12 {width: 100%;}
+ * mt,mr,mb,ml for margin
+ * fs fontSize
+ *
  */

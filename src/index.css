@@ -10,6 +10,20 @@ code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+a {
+	text-decoration: none;
+}
+
+input {
+	outline: none;
+	border: none;
+}
+
+button {
+	border: none;
+	cursor: pointer;
+}
+
 :root {
 	--color1: #a03c78;
 	--color2: #ed8e7c;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FullWidthContainer } from "../html-components/common-components";
+import { FullScreenContainer } from "../html-components/common-components";
 
 const Login = (props) => {
 	const [values, setValues] = useState({
@@ -63,7 +63,7 @@ const Login = (props) => {
 		}
 	};
 
-	return <FullWidthContainer>login</FullWidthContainer>;
+	return <FullScreenContainer>login</FullScreenContainer>;
 	// <Container fixed>
 	// 	<div className="login-screen">
 	// 		<Avatar src="/broken-image.jpg" className="avatar-icon" />

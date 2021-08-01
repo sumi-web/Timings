@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
+
+import { RegisterUser } from "../../action/authAction";
+
 import { Link } from "react-router-dom";
 import { Box, Button, FlexBox, FormBox, FullScreenContainer, Image, Input, Label, Span } from "../html-components/common-components";
 
@@ -12,16 +16,12 @@ const Register = (props) => {
 		showPassword: false,
 	});
 
-	const [inputErrors, setInputErrors] = useState({});
+	const [isLoading, setIsLoading] = useState(false);
 
-	console.log("check", inputValues, inputErrors);
+	const [inputErrors, setInputErrors] = useState({});
 
 	const changeName = ({ target }) => {
 		setInputValues({ ...inputValues, name: target.value });
-	};
-
-	const changeImageUrl = ({ target }) => {
-		setInputValues({ ...inputValues, imageUrl: target.value });
 	};
 
 	const changeEmail = ({ target }) => {
@@ -32,13 +32,12 @@ const Register = (props) => {
 		setInputValues({ ...inputValues, password: target.value });
 	};
 
-	const toggleShowPassword = () => {
+	const togglePasswordVisibility = () => {
 		setInputValues({ ...inputValues, showPassword: !inputValues.showPassword });
 	};
 
 	const deleteErrorOnFocus = ({ target }) => {
 		const error = { ...inputErrors };
-		console.log("check name", target.name);
 		if (!!inputErrors[target.name]) {
 			delete error[target.name];
 			setInputErrors(error);
@@ -75,29 +74,30 @@ const Register = (props) => {
 		return errors;
 	};
 
-	const onSubmit = (e) => {
+	const registerUser = (e) => {
 		e.preventDefault();
 		const errors = checkForErrors();
 		if (Object.keys(errors).length > 0) {
 			setInputErrors(errors);
 		} else {
-			console.log("submit form");
+			setIsLoading(true);
+			props.Register_User(inputValues).then(() => setIsLoading(false));
 		}
 	};
 
 	return (
 		<FullScreenContainer>
-			<Box width="33.33%">
+			<Box width="col_4">
 				<Image src="https://image.flaticon.com/icons/png/512/847/847969.png" height="120px" mb="small" />
 				<form autoComplete="off">
 					<FlexBox direction="column" width="col_8">
-						<FormBox mb="small" error={!!inputErrors.name}>
+						<FormBox error={!!inputErrors.name}>
 							<Label
 								fs={!!inputValues.name ? "xsmall" : "medium"}
 								color={!!inputValues.name ? "secondary" : 400}
 								mb="xxsmal"
 								position="absolute"
-								top={!!inputValues.name ? "5px" : "35px"}
+								top={!!inputValues.name ? "15px" : "45px"}
 								error={!!inputErrors.name}
 							>
 								Your Name
@@ -115,32 +115,10 @@ const Register = (props) => {
 								error={!!inputErrors.name}
 							/>
 							{!!inputErrors.name ? (
-								<Span fs="small" color="red">
+								<Span fs="small" color="red" pt="xxsmall">
 									{inputErrors.name}
 								</Span>
 							) : null}
-						</FormBox>
-
-						<FormBox mb="small">
-							<Label
-								fs={!!inputValues.imageUrl ? "xsmall" : "medium"}
-								color={!!inputValues.imageUrl ? "secondary" : 400}
-								mb="xxsmal"
-								position="absolute"
-								top={!!inputValues.imageUrl ? "5px" : "35px"}
-							>
-								Image Url
-							</Label>
-							<Input
-								type="text"
-								name="imageUrl"
-								value={inputValues.imageUrl}
-								onChange={changeImageUrl}
-								height="35"
-								fs="medium"
-								bt={!!inputValues.imageUrl ? { size: "2px", color: "secondary" } : { size: "2px", color: 300 }}
-								color={600}
-							/>
 						</FormBox>
 
 						<FormBox mb="small" error={!!inputErrors.email}>
@@ -149,7 +127,7 @@ const Register = (props) => {
 								color={!!inputValues.email ? "secondary" : 400}
 								mb="xxsmal"
 								position="absolute"
-								top={!!inputValues.email ? "5px" : "35px"}
+								top={!!inputValues.email ? "15px" : "45px"}
 								error={!!inputErrors.email}
 							>
 								Email
@@ -167,7 +145,7 @@ const Register = (props) => {
 								error={!!inputErrors.email}
 							/>
 							{!!inputErrors.email ? (
-								<Span fs="small" color="red">
+								<Span fs="small" color="red" pt="xxsmall">
 									{inputErrors.email}
 								</Span>
 							) : null}
@@ -179,13 +157,13 @@ const Register = (props) => {
 								color={!!inputValues.password ? "secondary" : 400}
 								mb="xxsmal"
 								position="absolute"
-								top={!!inputValues.password ? "5px" : "35px"}
+								top={!!inputValues.password ? "15px" : "45px"}
 								error={!!inputErrors.password}
 							>
 								Password
 							</Label>
 							<Input
-								type="password"
+								type={inputValues.showPassword ? "text" : "password"}
 								name="password"
 								value={inputValues.password}
 								onChange={changePassword}
@@ -196,17 +174,31 @@ const Register = (props) => {
 								color={600}
 								error={!!inputErrors.password}
 							/>
+							<i className={`fa ${inputValues.showPassword ? "fa-eye" : "fa-eye-slash"}`} aria-hidden="true" onClick={togglePasswordVisibility}></i>
 							{!!inputErrors.password ? (
-								<Span fs="small" color="red">
+								<Span fs="small" color="red" pt="xxsmall">
 									{inputErrors.password}
 								</Span>
 							) : null}
 						</FormBox>
-						<Button type="submit" fs="large" color="white" bg="secondary" mt="medium" mb="small" ptb="xsmall" plr="large" br="xxsmall" onClick={onSubmit}>
-							Sign Up
+						<Button
+							type="submit"
+							disabled={isLoading}
+							fs="large"
+							color="white"
+							bg="secondary"
+							mt="medium"
+							mb="small"
+							ptb="xsmall"
+							plr="large"
+							br="xxsmall"
+							hoverColor="secondary"
+							onClick={registerUser}
+						>
+							{isLoading ? <i className="fa fa-spinner fa-pulse fa-fw"></i> : "Sign Up"}
 						</Button>
 						<Span color={500} fs="small" nestedTagFs="large">
-							already have an account? <Link to="/login">Sign In Now</Link>{" "}
+							Already have an account? <Link to="/login">Sign In Now</Link>{" "}
 						</Span>
 					</FlexBox>
 				</form>
@@ -215,4 +207,7 @@ const Register = (props) => {
 	);
 };
 
-export default Register;
+const mapDispatchToProps = (dispatch) => ({
+	Register_User: (inputValues) => dispatch(RegisterUser(inputValues)),
+});
+export default connect(null, mapDispatchToProps)(Register);

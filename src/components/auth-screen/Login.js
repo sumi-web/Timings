@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import { FullScreenContainer } from "../html-components/common-components";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { LoginUser } from "../../action/authAction";
+import { Box, Button, FlexBox, FormBox, FullScreenContainer, Image, Input, Label, Span } from "../html-components/common-components";
+// import { MdAccountCircle } from "react-icons/md";
 
 const Login = (props) => {
-	const [values, setValues] = useState({
+	const [inputValues, setInputValues] = useState({
 		email: "",
 		password: "",
 		showPassword: false,
@@ -10,26 +14,18 @@ const Login = (props) => {
 
 	const [inputErrors, setInputErrors] = useState({});
 
+	const [isLoading, setIsLoading] = useState(false);
+
 	const changeEmail = ({ target }) => {
-		setValues({ ...values, email: target.value });
+		setInputValues({ ...inputValues, email: target.value });
 	};
 
 	const changePassword = ({ target }) => {
-		setValues({ ...values, password: target.value });
+		setInputValues({ ...inputValues, password: target.value });
 	};
 
-	const toggleShowPassword = () => {
-		setValues({ ...values, showPassword: !values.showPassword });
-	};
-
-	const LoginUser = (e) => {
-		e.preventDefault();
-		const errors = checkForErrorsBeforeSubmit();
-		if (Object.keys(errors).length > 0) {
-			setInputErrors({ ...errors });
-		} else {
-			console.log("sumit");
-		}
+	const togglePasswordVisibility = () => {
+		setInputValues({ ...inputValues, showPassword: !inputValues.showPassword });
 	};
 
 	const checkForErrorsBeforeSubmit = () => {
@@ -37,17 +33,19 @@ const Login = (props) => {
 
 		const emailRegex = /\S+@\S+\.\S+/;
 
-		if (values.email.trim() === "") {
+		//validation for email
+		if (inputValues.email.trim() === "") {
 			errors.email = "email can not be empty";
-		} else if (!emailRegex.test(values.email)) {
+		} else if (!emailRegex.test(inputValues.email)) {
 			errors.email = "invalid email format";
 		}
 
-		if (values.password.trim() === "") {
+		//validation for number
+		if (inputValues.password.trim() === "") {
 			errors.password = "password can not be empty";
-		} else if (values.password.trim().length <= 7) {
+		} else if (inputValues.password.trim().length <= 7) {
 			errors.password = "password should contain 8 letters atleast";
-		} else if (!/[A-Z]/.test(values.password)) {
+		} else if (!/[A-Z]/.test(inputValues.password)) {
 			errors.password = " password should contain atleast one uppercase";
 		}
 
@@ -63,86 +61,98 @@ const Login = (props) => {
 		}
 	};
 
-	return <FullScreenContainer>login</FullScreenContainer>;
-	// <Container fixed>
-	// 	<div className="login-screen">
-	// 		<Avatar src="/broken-image.jpg" className="avatar-icon" />
-	// 		<form autoComplete="off" noValidate>
-	// 			<Box width={340} display="flex" flexDirection="column">
-	// 				<FormControl className="form-box">
-	// 					<InputLabel htmlFor="standard-adornment-email" error={!!inputErrors.email}>
-	// 						Email
-	// 					</InputLabel>
-	// 					<Input
-	// 						id="standard-adornment-email"
-	// 						className="input-field"
-	// 						type="email"
-	// 						name="email"
-	// 						error={!!inputErrors.email}
-	// 						value={values.email}
-	// 						onChange={changeEmail}
-	// 						aria-describedby="component-error-text"
-	// 						onFocus={deleteErrorOnFocus}
-	// 						required
-	// 					/>
-	// 					{!!inputErrors.email ? (
-	// 						<FormHelperText id="component-error-text" error>
-	// 							{inputErrors.email}
-	// 						</FormHelperText>
-	// 					) : null}
-	// 				</FormControl>
+	const LoginUser = (e) => {
+		e.preventDefault();
+		const errors = checkForErrorsBeforeSubmit();
+		if (Object.keys(errors).length > 0) {
+			setInputErrors({ ...errors });
+		} else {
+			setIsLoading(true);
+			props.Login_User(inputValues).then(() => setIsLoading(false));
+		}
+	};
 
-	// 				<FormControl className="form-box">
-	// 					<InputLabel htmlFor="standard-adornment-password" error={!!inputErrors.password}>
-	// 						Password
-	// 					</InputLabel>
-	// 					<Input
-	// 						id="standard-adornment-password"
-	// 						type={values.showPassword ? "text" : "password"}
-	// 						error={!!inputErrors.password}
-	// 						name="password"
-	// 						endAdornment={
-	// 							<InputAdornment position="end">
-	// 								<IconButton
-	// 									aria-label="toggle password visibility"
-	// 									onClick={toggleShowPassword}
-	// 									onMouseDown={(e) => e.preventDefault()}
-	// 								>
-	// 									{values.showPassword ? <Visibility /> : <VisibilityOff />}
-	// 								</IconButton>
-	// 							</InputAdornment>
-	// 						}
-	// 						value={values.password}
-	// 						onChange={changePassword}
-	// 						onFocus={deleteErrorOnFocus}
-	// 					/>
-	// 					{!!inputErrors.password ? (
-	// 						<FormHelperText id="component-error-text" error>
-	// 							{inputErrors.password}
-	// 						</FormHelperText>
-	// 					) : null}
-	// 				</FormControl>
+	return (
+		<FullScreenContainer>
+			{/* <MdAccountCircle /> */}
+			<Box width="col_4">
+				<Image src="https://image.flaticon.com/icons/png/512/847/847969.png" height="120px" mb="small" />
+				<form autoComplete="off">
+					<FlexBox direction="column" width="col_8">
+						<FormBox mb="small" error={!!inputErrors.email}>
+							<Label
+								fs={!!inputValues.email ? "xsmall" : "medium"}
+								color={!!inputValues.email ? "secondary" : 400}
+								mb="xxsmal"
+								position="absolute"
+								top={!!inputValues.email ? "15px" : "45px"}
+								error={!!inputErrors.email}
+							>
+								Email
+							</Label>
+							<Input
+								type="text"
+								name="email"
+								value={inputValues.email}
+								onChange={changeEmail}
+								onFocus={deleteErrorOnFocus}
+								height="35"
+								fs="medium"
+								bt={!!inputValues.email ? { size: "2px", color: "secondary" } : { size: "2px", color: 300 }}
+								color={600}
+								error={!!inputErrors.email}
+							/>
+							{!!inputErrors.email ? (
+								<Span fs="small" color="red" pt="xxsmall">
+									{inputErrors.email}
+								</Span>
+							) : null}
+						</FormBox>
 
-	// 				<Button type="submit" variant="contained" color="secondary" className="sign-in-btn" onClick={LoginUser}>
-	// 					Sign In
-	// 				</Button>
-
-	// 				<Typography style={{ color: grey[600] }} paragraph={true}>
-	// 					Don't have an account? {"  "}
-	// 					<Typography
-	// 						component="span"
-	// 						display="inline"
-	// 						style={{ cursor: "pointer", fontWeight: 900 }}
-	// 						color="primary"
-	// 						onClick={() => props.history.push("/register")}
-	// 					>
-	// 						register here
-	// 					</Typography>
-	// 				</Typography>
-	// 			</Box>
-	// 		</form>
-	// 	</div>
-	// </Container>
+						<FormBox mb="small" error={!!inputErrors.password}>
+							<Label
+								fs={!!inputValues.password ? "xsmall" : "medium"}
+								color={!!inputValues.password ? "secondary" : 400}
+								mb="xxsmal"
+								position="absolute"
+								top={!!inputValues.password ? "15px" : "45px"}
+								error={!!inputErrors.password}
+							>
+								Password
+							</Label>
+							<Input
+								type={inputValues.showPassword ? "text" : "password"}
+								name="password"
+								value={inputValues.password}
+								onChange={changePassword}
+								onFocus={deleteErrorOnFocus}
+								height="35"
+								fs="medium"
+								bt={!!inputValues.password ? { size: "2px", color: "secondary" } : { size: "2px", color: 300 }}
+								color={600}
+								error={!!inputErrors.password}
+							/>
+							<i className={`fa ${inputValues.showPassword ? "fa-eye" : "fa-eye-slash"}`} aria-hidden="true" onClick={togglePasswordVisibility}></i>
+							{!!inputErrors.password ? (
+								<Span fs="small" color="red" pt="xxsmall">
+									{inputErrors.password}
+								</Span>
+							) : null}
+						</FormBox>
+						<Button type="submit" disabled={isLoading} fs="large" color="white" bg="secondary" mt="medium" mb="small" ptb="xsmall" plr="large" br="xxsmall" onClick={LoginUser}>
+							{isLoading ? <i className="fa fa-spinner fa-pulse fa-fw"></i> : "Sign In"}
+						</Button>
+						<Span color={500} fs="small" nestedTagFs="large">
+							Don't have an account? <Link to="/register">Register Now</Link>{" "}
+						</Span>
+					</FlexBox>
+				</form>
+			</Box>
+		</FullScreenContainer>
+	);
 };
 
-export default Login;
+const mapDispatchToProps = (dispatch) => ({
+	Login_User: (inputValues) => dispatch(LoginUser(inputValues)),
+});
+export default connect(null, mapDispatchToProps)(Login);

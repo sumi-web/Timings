@@ -1,9 +1,14 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { ThemeProvider } from "@emotion/react";
 
 import Routes from "./Routes";
-import { auth } from "./firebase";
-import history from "./history";
+
+import { GetUserCredentials } from "./action/authAction";
 
 const theme = {
 	colors: {
@@ -75,38 +80,25 @@ const theme = {
 	},
 };
 
-const userCredentials = {
-	user: null,
-};
-
-export const UserContext = createContext(userCredentials);
-
-export const App = () => {
-	const [userData, setUserData] = useState({ ...userCredentials });
-
+const App = (props) => {
 	useEffect(() => {
-		auth.onAuthStateChanged((user) => {
-			console.log("fetched user");
-			if (user) {
-				// user found
-			} else {
-				//no user found
-				setUserData({});
-				history.push("/register");
-			}
-		});
+		props.Get_User_Credentials();
 	}, []);
 
 	return (
 		<>
 			<ThemeProvider theme={theme}>
-				<UserContext.Provider value={userData}>
-					<Routes />
-				</UserContext.Provider>
+				<Routes />
 			</ThemeProvider>
+			<ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
 		</>
 	);
 };
+
+const mapDispatchToProps = (dispatch) => ({
+	Get_User_Credentials: () => dispatch(GetUserCredentials()),
+});
+export default connect(null, mapDispatchToProps)(App);
 
 // min width 970px screen size larger than 970
 // max width  970px screen smaller than 970

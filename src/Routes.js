@@ -1,21 +1,19 @@
-import React, { useContext } from "react";
+import React from "react";
+import { connect } from "react-redux";
 import { Switch, Route, Router } from "react-router-dom";
 import history from "./history";
 import Home from "./components/Home";
 import loadingScreen from "./components/loading-screen/loadingScreen";
 import Login from "./components/auth-screen/Login";
 import Register from "./components/auth-screen/Register";
-import { UserContext } from "./App";
 
-const Routes = () => {
-	const userCredentials = useContext(UserContext);
-
+const Routes = (props) => {
 	return (
 		<Router history={history}>
 			<Switch>
-				{userCredentials.user === null ? (
+				{props.user === null ? (
 					<Route exact path="/" component={loadingScreen} />
-				) : !!userCredentials.user && userCredentials.user.name ? (
+				) : props.user && props.user.email ? (
 					<Route path="/home" component={Home} />
 				) : (
 					<>
@@ -28,4 +26,7 @@ const Routes = () => {
 	);
 };
 
-export default Routes;
+const mapStateToProps = (state) => ({
+	user: state.auth_store.user,
+});
+export default connect(mapStateToProps)(Routes);

@@ -9,6 +9,7 @@ import { ThemeProvider } from "@emotion/react";
 import Routes from "./Routes";
 
 import { GetUserCredentials } from "./action/authAction";
+import LoadingScreen from "./components/loading-screen/loadingScreen";
 
 const theme = {
 	colors: {
@@ -87,18 +88,19 @@ const App = (props) => {
 
 	return (
 		<>
-			<ThemeProvider theme={theme}>
-				<Routes />
-			</ThemeProvider>
+			<ThemeProvider theme={theme}>{props.showScreenLoader ? <LoadingScreen /> : <Routes />}</ThemeProvider>
 			<ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
 		</>
 	);
 };
 
+const mapStateToProps = (state) => ({
+	showScreenLoader: state.common_store.showScreenLoader,
+});
 const mapDispatchToProps = (dispatch) => ({
 	Get_User_Credentials: () => dispatch(GetUserCredentials()),
 });
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 
 // min width 970px screen size larger than 970
 // max width  970px screen smaller than 970

@@ -2,8 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Switch, Route, Router } from "react-router-dom";
 import history from "./history";
-import Home from "./components/Home";
-import loadingScreen from "./components/loading-screen/loadingScreen";
+import Home from "./components/home-screen/Home";
 import Login from "./components/auth-screen/Login";
 import Register from "./components/auth-screen/Register";
 
@@ -11,9 +10,7 @@ const Routes = (props) => {
 	return (
 		<Router history={history}>
 			<Switch>
-				{props.user === null ? (
-					<Route exact path="/" component={loadingScreen} />
-				) : props.user && props.user.email ? (
+				{props.user && props.user.email ? (
 					<Route path="/home" component={Home} />
 				) : (
 					<>

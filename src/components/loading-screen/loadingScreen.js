@@ -2,7 +2,7 @@ import React from "react";
 
 import "./loading.css";
 
-const loadingScreen = () => {
+const LoadingScreen = () => {
 	return (
 		<div id="loading-wrapper">
 			<div id="loading-text">Hold On..</div>
@@ -11,4 +11,4 @@ const loadingScreen = () => {
 	);
 };
 
-export default loadingScreen;
+export default LoadingScreen;

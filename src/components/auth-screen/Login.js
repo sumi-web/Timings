@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { LoginUser } from "../../action/authAction";
-import { Box, Button, FlexBox, FormBox, FullScreenContainer, Image, Input, Label, Span } from "../html-components/common-components";
+import { Box, Button, FlexBox, FormBox, FullScreenContainer, Image, Input, Label, Span } from "./authStyle";
 // import { MdAccountCircle } from "react-icons/md";
 
 const Login = (props) => {

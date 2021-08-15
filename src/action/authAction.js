@@ -14,9 +14,11 @@ export const GetUserCredentials = () => (dispatch, getState) => {
 		// user found
 		if (userDetails) {
 			if (existingUser === null) {
+				console.log("found user", userDetails);
 				const user = {
 					name: userDetails.displayName,
 					email: userDetails.email,
+					id: userDetails.uid,
 				};
 
 				dispatch({ type: SET_USER_CREDENTIALS, user });

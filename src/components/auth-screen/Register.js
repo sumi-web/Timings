@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { RegisterUser } from "../../action/authAction";
 
 import { Link } from "react-router-dom";
-import { Box, Button, FlexBox, FormBox, FullScreenContainer, Image, Input, Label, Span } from "../html-components/common-components";
+import { Box, Button, FlexBox, FormBox, FullScreenContainer, Image, Input, Label, Span } from "./authStyle";
 
 const Register = (props) => {
 	const [inputValues, setInputValues] = useState({

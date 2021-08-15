@@ -15,12 +15,13 @@ const theme = {
 	colors: {
 		primary: "#512D6D",
 		secondary: "#a03c78",
-		third: "#93d9a3",
+		green: "#93d9a3",
 		orange: "#ed8e7c",
 		reddish: "#F8485E",
 		blue: "#00C1D4",
 		white: "#fff",
 		red: "#c80000",
+		grey: "#f1f3f6",
 		100: "#EAEAEA",
 		200: "#C9C5C5",
 		300: "#888",
@@ -47,6 +48,7 @@ const theme = {
 		large: "1.125rem",
 		xlarge: "1.266rem",
 		xxlarge: "1.424rem",
+		xxxlarge: "1.566rem",
 	},
 	spacing: {
 		none: 0,

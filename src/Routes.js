@@ -1,10 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Switch, Route, Router } from "react-router-dom";
+
 import history from "./history";
-import Home from "./components/home-screen/Home";
-import Login from "./components/auth-screen/Login";
-import Register from "./components/auth-screen/Register";
+import Home from "./home-screen/Home";
+import Login from "./auth-screen/Login";
+import Register from "./auth-screen/Register";
 
 const Routes = (props) => {
 	return (

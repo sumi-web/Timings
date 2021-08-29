@@ -1,0 +1,95 @@
+$font-stack: "Roboto";
+$color-primary: #512d6d;
+$color-secondary: #a03c78;
+$color-green: #8cc152;
+$color-info: #4fc1e9;
+$color-warning: #fc6e51;
+$color-warning-light: #fff0ca;
+$color-danger: #ff0000;
+$color-danger-light: #fff5f5;
+$color-yellow: #fcbb42;
+$color-black: #000;
+$color-dark-gray: #434a54;
+$color-medium-gray: #a2a8b1;
+$color-light-gray: #aab2bd;
+$color-lightest-gray: #f4f4f4;
+$color-bg-gray: #f1f3f6;
+$white: #fff;
+$black-primary: #232323;
+$black-secondary: #222;
+//-------- font sizes ------
+$font-xmsall: 0.79rem;
+$font-small: 0.889rem;
+$font-medium: 1rem;
+$font-large: 1.125rem;
+$font-xxlarge: 1.424rem;
+$font-xxxlarge: 1.566rem;
+
+// -------- spacing ---------
+$space-none: 0;
+$space-xxmsall: 4px;
+$space-xmsmall: 8px;
+$space-small: 12px;
+$space-medium: 20px;
+$space-gutter: 24px;
+$space-large: 32px;
+$space-xlarge: 48px;
+$space-xxlarge: 96px;
+
+// ------ breakPoints ------
+$break-vs: 476px;
+$break-sm: 576px;
+$break-md: 768px;
+$break-la: 992px;
+$break-xl: 1200px;
+
+// ------- width size -------
+$width-col-1: 8.33%;
+$width-col-2: 16.66%;
+$width-col-3: 25%;
+$width-col-4: 33.33%;
+$width-col-5: 41.66%;
+$width-col-6: 50%;
+$width-col-7: 58.33%;
+$width-col-8: 66.66%;
+$width-col-9: 75%;
+$width-col-10: 83.33%;
+$width-col-11: 91.66%;
+$width-col-12: 100%;
+
+//--------steps variable--------
+$circleSize: 50px;
+$circleBorderWidth: 5px;
+$lineOffset: 10px;
+
+/*--------button start--------*/
+$btn-font-weight: normal !default;
+
+$btn-default-color: #333 !default;
+$btn-default-bg: #fff !default;
+$btn-default-border: #ccc !default;
+
+// $btn-white-color: #fff !default;
+// $btn-primary-bg: $color-primary !default;
+// $btn-healthMug-border: darken($btn-primary-bg, 5%) !default;
+
+// $btn-secondary-bg: $color-secondary !default;
+// $btn-healthMug-border: darken($btn-secondary-bg, 5%) !default;
+
+// // $btn-success-color: #fff !default;
+// $btn-success-bg: $color-green !default;
+// $btn-success-border: darken($btn-success-bg, 5%) !default;
+
+// // $btn-warning-color: #fff !default;
+// $btn-warning-bg: $brand-warning !default;
+// $btn-warning-border: darken($btn-warning-bg, 5%) !default;
+
+// // $btn-danger-color: #fff !default;
+// $btn-danger-bg: $color-danger !default;
+// $btn-danger-border: darken($btn-danger-bg, 5%) !default;
+
+// // $btn-info-color: #fff !default;
+// $btn-info-bg: $color-info !default;
+// $btn-info-border: darken($btn-info-bg, 5%) !default;
+
+/*--------button end----------*/

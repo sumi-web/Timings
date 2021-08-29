@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { CreateEntryAndExitTime } from "../../action/timeAction";
-import { Box, Button, Center, H1, Span } from "./HomeStyle";
+import { CreateEntryAndExitTime } from "../action/timeAction";
+
+import fingerImg from "../assets/fingerprint-svgrepo-com.png";
 
 const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -28,22 +29,20 @@ const ShowTime = (props) => {
 
 	return (
 		<>
-			<Center direction="column">
-				<Span color="secondary" fs="xxlarge" fw="700" mb="xxsmall">
-					{`${String(date.getDate()).length === 1 ? "0" + date.getDate() : date.getDate()}-${monthList[date.getMonth()]}-${date.getFullYear()}`}
-				</Span>
-				<Span color="secondary" fs="xxlarge" fw="500" mb="xsmall">
-					{date.toLocaleTimeString()}
-				</Span>
-			</Center>
-			<Box width="col_8" direction="row" js="space-between" ai="center" mtb="small">
-				<Button color="white" bg="green" fs="large" width="col_4" ptb="xsmall" plr="xxsmall" br="xsmall" onClick={setEntryTime}>
-					Entry
-				</Button>
-				<Button color="white" bg="reddish" fs="large" width="col_4" ptb="xsmall" plr="xxsmall" br="xsmall" onClick={setExitTime}>
-					Exit
-				</Button>
-			</Box>
+			<div className="punch-container">
+				<div className="punch-finger-box">
+					<img src={fingerImg} alt="finger" />
+					<p>&#8211; Punch Now &#8211;</p>
+				</div>
+				<div className="show-time-box">
+					<h6> {`${String(date.getDate()).length === 1 ? "0" + date.getDate() : date.getDate()}-${monthList[date.getMonth()]}-${date.getFullYear()}`}</h6>
+					<h4>{date.toLocaleTimeString()}</h4>
+				</div>
+			</div>
+
+			{/* <Button color="white" bg="primary" width="col_4" ptb="xsmall" plr="xxsmall" br="xsmall" fs="large">
+				Submit
+			</Button> */}
 		</>
 	);
 };

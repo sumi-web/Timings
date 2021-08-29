@@ -1,0 +1,204 @@
+.btn {
+	display: inline-block;
+	margin-bottom: 0; // For input.btn
+	font-weight: $btn-font-weight;
+	text-align: center;
+	vertical-align: middle;
+	touch-action: manipulation;
+	cursor: pointer;
+	background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+	border: 1px solid transparent;
+	white-space: nowrap;
+	@include borderRadius(2px);
+	// @include button-size(8px, 10px, 14px, 16px);
+
+	&:hover,
+	&:focus,
+	&.focus {
+		color: $btn-default-color;
+		text-decoration: none;
+	}
+
+	&:active,
+	&.active {
+		outline: 0;
+		background-image: none;
+	}
+
+	&.disabled,
+	&[disabled],
+	fieldset[disabled] & {
+		cursor: normal;
+		opacity: 0.7;
+		cursor: default;
+	}
+
+	// [converter] extracted a& to a.btn
+}
+
+// a.btn {
+// 	&.disabled,
+// 	fieldset[disabled] & {
+// 		pointer-events: none; // Future-proof disabling of clicks on `<a>` elements
+// 	}
+// }
+// .btn-default {
+// 	@include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
+// }
+
+// .btn-healthmug {
+// 	@include button-variant($btn-healthMug-color, $btn-healthMug-bg, $btn-healthMug-border);
+// 	transition: 0.2s;
+// 	&:hover {
+// 		box-shadow: 0px 0px 7px 0px rgba(55, 176, 141, 0.63);
+// 		border-color: rgba(55, 176, 141, 0.63);
+// 		background-color: darken($btn-healthMug-bg, 10%);
+// 		color: #fff;
+// 	}
+// }
+// .btn-orange {
+// 	@include button-variant($white, $brand-orange, $brand-orange);
+// 	transition: 0.2s;
+// 	&:hover {
+// 		box-shadow: none;
+// 		border-color: $brand-orange;
+// 		background-color: $brand-orange;
+// 		color: $white;
+// 		@include mdq("(min-width:768px)") {
+// 			box-shadow: 0px 0px 7px 0px rgba(251, 137, 3, 0.63);
+// 			border-color: rgba(251, 137, 3, 0.63);
+// 			background-color: darken($brand-orange, 10%);
+// 		}
+// 	}
+// 	&:active {
+// 		box-shadow: none;
+// 		border-color: $brand-orange;
+// 		background-color: $brand-orange;
+// 		color: $white;
+// 		@include mdq("(min-width:768px)") {
+// 			box-shadow: 0px 0px 7px 0px rgba(251, 137, 3, 0.63);
+// 		}
+// 	}
+// }
+// .btn-darkgray {
+// 	@include button-variant(#fff, #3e3e3e, #2f2f2f);
+// 	transition: 0.2s;
+// }
+// .btn-healthmugBorder {
+// 	@include button-variant($brand-healthmug, #fff, $brand-healthmug);
+// 	transition: 0.2s;
+// 	&:hover {
+// 		box-shadow: 0px 0px 7px 0px rgba(81, 201, 166, 0.63);
+// 		border-color: rgba(81, 201, 166, 0.63);
+// 		background-color: $brand-healthmug;
+// 		color: #fff;
+// 	}
+// 	&:active {
+// 		background-color: $brand-healthmug !important;
+// 		border-color: $brand-healthmug !important;
+// 		color: #fff !important;
+// 	}
+// }
+// // Success appears as green
+// .btn-success {
+// 	@include button-variant($btn-success-color, $btn-success-bg, $btn-success-border);
+// }
+// // Info appears as blue-green
+// .btn-info {
+// 	@include button-variant($btn-info-color, $btn-info-bg, $btn-info-border);
+// }
+// // Warning appears as orange
+// .btn-warning {
+// 	@include button-variant($btn-warning-color, $btn-warning-bg, $btn-warning-border);
+// }
+// // Danger and error appear as red
+// .btn-danger {
+// 	@include button-variant($btn-danger-color, $btn-danger-bg, $btn-danger-border);
+// }
+
+// .btn-clear {
+// 	@include link-colors($light-gray, $brand-healthmug-dark, false, false, false);
+// 	background-color: transparent;
+// 	border: 0px;
+// 	outline: none;
+// }
+
+// .size-lg {
+// 	// line-height: ensure even-numbered height of button next to large input
+// 	@include button-size(11px, 20px, 17px, 17px);
+// }
+// .size-md {
+// 	// line-height: ensure proper height of button next to small input
+// 	@include button-size(8px, 10px, 14px, 16px);
+// }
+// .size-sm {
+// 	// line-height: ensure proper height of button next to small input
+// 	@include button-size(6px, 8px, 14px, 14px);
+// }
+// .size-xs {
+// 	@include button-size(3px, 5px, 12px, 14px);
+// }
+
+// .btn-block {
+// 	display: block;
+// 	width: 100%;
+// 	box-sizing: border-box;
+// }
+
+// .btn {
+// 	&.size-lg {
+// 		&.btnLoader {
+// 			padding-left: 40px;
+// 			padding-right: 40px;
+// 			.productLoader {
+// 				top: 11px;
+// 				right: 10px;
+// 			}
+// 		}
+// 	}
+// 	&.btn-md {
+// 		&.btnLoader {
+// 			padding-left: 40px;
+// 			padding-right: 40px;
+// 			.productLoader {
+// 				top: 6px;
+// 				right: 10px;
+// 			}
+// 		}
+// 	}
+// 	&.size-sm {
+// 		.htmlLoader {
+// 			width: 15px;
+// 			height: 15px;
+// 			top: 5px;
+// 		}
+// 	}
+// }
+
+button.btn-primary-small {
+	@include button-variant($font-small, $white, $color-primary, $color-lightest-gray);
+	padding: 0.5rem 1rem;
+	border-radius: 5px;
+}
+
+button.btn-primary-medium {
+	@include button-variant($font-medium, $white, $color-primary, $color-lightest-gray);
+}
+
+button.btn-primary-large {
+	@include button-variant($font-large, $white, $color-primary, $color-lightest-gray);
+}
+
+button.btn-secondary-small {
+	@include button-variant($font-small, $white, $color-secondary, $color-lightest-gray);
+	padding: 0.5rem 1rem;
+	border-radius: 5px;
+}
+
+button.btn-secondary-medium {
+	@include button-variant($font-medium, $white, $color-secondary, $color-lightest-gray);
+}
+
+button.btn-secondary-large {
+	@include button-variant($font-large, $white, $color-secondary, $color-lightest-gray);
+}

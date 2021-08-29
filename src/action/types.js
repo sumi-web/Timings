@@ -7,3 +7,4 @@ export const SET_USER_CREDENTIALS = "SET_USER_CREDENTIALS";
 
 /** time reducer */
 export const SET_USERS_TIME_LIST = "SET_USERS_TIME_LIST";
+export const SET_USER_WORK_TILL_NOW = "SET_USER_WORK_TILL_NOW";

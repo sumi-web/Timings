@@ -19,37 +19,25 @@ const ShowTime = (props) => {
 		};
 	}, []);
 
-	const setEntryTime = () => {
-		props.Create_Entry_And_Exit_Time("entry", date.getTime());
-	};
-
-	const setExitTime = () => {
-		props.Create_Entry_And_Exit_Time("exit", date.getTime());
+	const submitTimeOnPunch = () => {
+		props.Create_Entry_And_Exit_Time(date.getTime());
 	};
 
 	return (
-		<>
-			<div className="punch-container">
-				<div className="punch-finger-box">
-					<img src={fingerImg} alt="finger" />
-					<p>&#8211; Punch Now &#8211;</p>
-				</div>
-				<div className="show-time-box">
-					<h6> {`${String(date.getDate()).length === 1 ? "0" + date.getDate() : date.getDate()}-${monthList[date.getMonth()]}-${date.getFullYear()}`}</h6>
-					<h4>{date.toLocaleTimeString()}</h4>
-				</div>
+		<div className="punch-container">
+			<div className="punch-finger-box">
+				<img src={fingerImg} alt="finger" onClick={submitTimeOnPunch} />
+				<p>&#8211; Punch Now &#8211;</p>
 			</div>
-
-			{/* <Button color="white" bg="primary" width="col_4" ptb="xsmall" plr="xxsmall" br="xsmall" fs="large">
-				Submit
-			</Button> */}
-		</>
+			<div className="show-time-box">
+				<h6> {`${String(date.getDate()).length === 1 ? "0" + date.getDate() : date.getDate()}-${monthList[date.getMonth()]}-${date.getFullYear()}`}</h6>
+				<h4>{date.toLocaleTimeString()}</h4>
+			</div>
+		</div>
 	);
 };
 
 const mapDispatchToProps = (dispatch) => ({
-	Create_Entry_And_Exit_Time: (punchType, timeStamp) => dispatch(CreateEntryAndExitTime(punchType, timeStamp)),
+	Create_Entry_And_Exit_Time: (punchType) => dispatch(CreateEntryAndExitTime(punchType, "")),
 });
 export default connect(null, mapDispatchToProps)(ShowTime);
-
-//year month date

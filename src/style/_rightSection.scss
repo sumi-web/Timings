@@ -1,0 +1,82 @@
+.time-info-box {
+	width: $width-col-12;
+	@include applyFlex(row, space-around, flex-start);
+	.time-container {
+		width: $width-col-5;
+		background: $white;
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+		margin: 0.25rem 0.7rem;
+		border-radius: 5px;
+		h3 {
+			margin: 0.5rem 0;
+			text-align: center;
+			color: $color-primary;
+			text-align: center;
+		}
+		.timing-details {
+			@include applyFlex(row, space-around, center);
+			div {
+				text-align: center;
+			}
+			.time-title {
+				color: $black-primary;
+			}
+
+			.time-info {
+				color: $color-dark-gray;
+			}
+		}
+	}
+	.time-container.center {
+		width: $width-col-6;
+	}
+}
+
+#time-table-box {
+	width: 100%;
+	overflow-x: auto;
+	overflow-y: auto;
+	table {
+		border-collapse: collapse;
+		margin: 5px 0;
+		font-size: 1rem;
+		width: $width-col-12;
+		background-color: $white;
+		padding: 0 10px;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+		overflow-y: scroll;
+		thead {
+			tr {
+				background-color: $color-secondary;
+				color: $white;
+				text-align: left;
+
+				th {
+					padding: 10px 13px;
+				}
+			}
+		}
+
+		tbody {
+			tr {
+				border-bottom: 1px solid #dddddd;
+				padding: 20px 0;
+				height: 40px;
+				&:nth-of-type(even) {
+					background-color: #f3f3f3;
+				}
+				&:last-of-type {
+					border-bottom: 2px solid $color-secondary;
+				}
+				&.active-row {
+					font-weight: bold;
+					color: $color-secondary;
+				}
+
+				td {
+					padding: 10px 13px;
+				}
+			}
+		}
+	}
+}

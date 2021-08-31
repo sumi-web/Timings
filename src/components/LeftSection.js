@@ -11,9 +11,7 @@ const LeftSection = (props) => {
 			<div id="bio-box">
 				<div className="bio-info">
 					{/* <img src="" alt="" /> */}
-					<div className="avatar-box">
-						<span>{props.user.name.slice(0, 1)}</span>
-					</div>
+					<div className="avatar-box">{props.user.name.slice(0, 1)}</div>
 
 					<h4>{props.user.name.toUpperCase() || ""}</h4>
 					<p>{props.user.email || ""}</p>

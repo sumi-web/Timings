@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { CreateEntryAndExitTime } from "../action/timeAction";
+import { CreateEntryOrExitTime } from "../action/timeAction";
 
 import fingerImg from "../assets/fingerprint-svgrepo-com.png";
 
@@ -20,7 +20,7 @@ const ShowTime = (props) => {
 	}, []);
 
 	const submitTimeOnPunch = () => {
-		props.Create_Entry_And_Exit_Time(date.getTime());
+		props.Create_Entry_Or_Exit_Time(date.getTime());
 	};
 
 	return (
@@ -38,6 +38,6 @@ const ShowTime = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-	Create_Entry_And_Exit_Time: (punchType) => dispatch(CreateEntryAndExitTime(punchType, "")),
+	Create_Entry_Or_Exit_Time: (punchType) => dispatch(CreateEntryOrExitTime(punchType, "")),
 });
 export default connect(null, mapDispatchToProps)(ShowTime);

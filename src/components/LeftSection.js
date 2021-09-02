@@ -21,9 +21,8 @@ const LeftSection = (props) => {
 			<div id="punch-box">
 				<AddPunchTime />
 			</div>
-			<div id="enter-time-box">
-				<EnterPunchTime />
-			</div>
+
+			<EnterPunchTime />
 		</>
 	);
 };

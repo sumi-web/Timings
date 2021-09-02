@@ -1,22 +1,5 @@
-body {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-	background-color: #fdfdfd;
-}
-
-code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
 a {
 	text-decoration: none;
-}
-
-input {
-	outline: none;
-	border: none;
 }
 
 button {
@@ -24,10 +7,10 @@ button {
 	cursor: pointer;
 }
 
-:root {
+/* :root {
 	--color1: #a03c78;
 	--color2: #ed8e7c;
 	--color3: #cdf3a2;
 	--color4: #93d9a3;
 	--color5: #54436b;
-}
+} */

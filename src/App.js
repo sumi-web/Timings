@@ -9,7 +9,7 @@ import { ThemeProvider } from "@emotion/react";
 import Routes from "./Routes";
 
 import { GetUserCredentials } from "./action/authAction";
-import LoadingScreen from "./components/loading-screen/loadingScreen";
+import LoadingScreen from "./loading-screen/loadingScreen";
 
 const theme = {
 	colors: {
@@ -84,6 +84,8 @@ const theme = {
 };
 
 const App = (props) => {
+	console.log("check props app", props);
+
 	useEffect(() => {
 		props.Get_User_Credentials();
 	}, []);
@@ -106,9 +108,3 @@ export default connect(mapStateToProps, mapDispatchToProps)(App);
 
 // min width 970px screen size larger than 970
 // max width  970px screen smaller than 970
-
-/**
- * mt,mr,mb,ml for margin
- * fs fontSize
- *
- */

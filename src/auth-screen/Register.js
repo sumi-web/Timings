@@ -1,20 +1,28 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import { LoginUser } from "../../action/authAction";
-import { Box, Button, FlexBox, FormBox, FullScreenContainer, Image, Input, Label, Span } from "./authStyle";
-// import { MdAccountCircle } from "react-icons/md";
 
-const Login = (props) => {
+import { RegisterUser } from "../action/authAction";
+
+import { Link } from "react-router-dom";
+import { Box, Button, FlexBox, FormBox, FullScreenContainer, Image, Input, Label, Span } from "./authStyle";
+
+const Register = (props) => {
 	const [inputValues, setInputValues] = useState({
+		name: "",
+		imageUrl: "",
 		email: "",
 		password: "",
+		isInputFocused: false,
 		showPassword: false,
 	});
 
+	const [isLoading, setIsLoading] = useState(false);
+
 	const [inputErrors, setInputErrors] = useState({});
 
-	const [isLoading, setIsLoading] = useState(false);
+	const changeName = ({ target }) => {
+		setInputValues({ ...inputValues, name: target.value });
+	};
 
 	const changeEmail = ({ target }) => {
 		setInputValues({ ...inputValues, email: target.value });
@@ -28,11 +36,25 @@ const Login = (props) => {
 		setInputValues({ ...inputValues, showPassword: !inputValues.showPassword });
 	};
 
-	const checkForErrorsBeforeSubmit = () => {
-		const errors = {};
+	const deleteErrorOnFocus = ({ target }) => {
+		const error = { ...inputErrors };
+		if (!!inputErrors[target.name]) {
+			delete error[target.name];
+			setInputErrors(error);
+		}
+	};
+
+	const checkForErrors = () => {
+		const errors = { ...inputErrors };
+		let someErrorState = false;
 
 		const emailRegex = /\S+@\S+\.\S+/;
-
+		//validation for name
+		if (inputValues.name.trim() === "") {
+			errors.name = "name can not be empty";
+		} else if (inputValues.name.trim().length <= 2) {
+			errors.name = "name should contain more than 2 letters";
+		}
 		//validation for email
 		if (inputValues.email.trim() === "") {
 			errors.email = "email can not be empty";
@@ -52,33 +74,53 @@ const Login = (props) => {
 		return errors;
 	};
 
-	const deleteErrorOnFocus = ({ target }) => {
-		if (!!inputErrors[target.name]) {
-			const errors = { ...inputErrors };
-			delete errors[target.name];
-			console.log("remove error", errors);
-			setInputErrors({ ...errors });
-		}
-	};
-
-	const LoginUser = (e) => {
+	const registerUser = (e) => {
 		e.preventDefault();
-		const errors = checkForErrorsBeforeSubmit();
+		const errors = checkForErrors();
 		if (Object.keys(errors).length > 0) {
-			setInputErrors({ ...errors });
+			setInputErrors(errors);
 		} else {
 			setIsLoading(true);
-			props.Login_User(inputValues).then(() => setIsLoading(false));
+			props.Register_User(inputValues).then(() => setIsLoading(false));
 		}
 	};
 
 	return (
 		<FullScreenContainer>
-			{/* <MdAccountCircle /> */}
 			<Box width="col_4">
 				<Image src="https://image.flaticon.com/icons/png/512/847/847969.png" height="120px" mb="small" />
 				<form autoComplete="off">
 					<FlexBox direction="column" width="col_8">
+						<FormBox error={!!inputErrors.name}>
+							<Label
+								fs={!!inputValues.name ? "xsmall" : "medium"}
+								color={!!inputValues.name ? "secondary" : 400}
+								mb="xxsmal"
+								position="absolute"
+								top={!!inputValues.name ? "15px" : "45px"}
+								error={!!inputErrors.name}
+							>
+								Your Name
+							</Label>
+							<Input
+								type="text"
+								name="name"
+								value={inputValues.name}
+								onChange={changeName}
+								onFocus={deleteErrorOnFocus}
+								height="35"
+								fs="medium"
+								bt={!!inputValues.name ? { size: "2px", color: "secondary" } : { size: "2px", color: 300 }}
+								color={600}
+								error={!!inputErrors.name}
+							/>
+							{!!inputErrors.name ? (
+								<Span fs="small" color="red" pt="xxsmall">
+									{inputErrors.name}
+								</Span>
+							) : null}
+						</FormBox>
+
 						<FormBox mb="small" error={!!inputErrors.email}>
 							<Label
 								fs={!!inputValues.email ? "xsmall" : "medium"}
@@ -139,11 +181,24 @@ const Login = (props) => {
 								</Span>
 							) : null}
 						</FormBox>
-						<Button type="submit" disabled={isLoading} fs="large" color="white" bg="secondary" mt="medium" mb="small" ptb="xsmall" plr="large" br="xxsmall" onClick={LoginUser}>
-							{isLoading ? <i className="fa fa-spinner fa-pulse fa-fw"></i> : "Sign In"}
+						<Button
+							type="submit"
+							disabled={isLoading}
+							fs="large"
+							color="white"
+							bg="secondary"
+							mt="medium"
+							mb="small"
+							ptb="xsmall"
+							plr="large"
+							br="xxsmall"
+							hoverColor="secondary"
+							onClick={registerUser}
+						>
+							{isLoading ? <i className="fa fa-spinner fa-pulse fa-fw"></i> : "Sign Up"}
 						</Button>
 						<Span color={500} fs="small" nestedTagFs="large">
-							Don't have an account? <Link to="/register">Register Now</Link>{" "}
+							Already have an account? <Link to="/login">Sign In Now</Link>{" "}
 						</Span>
 					</FlexBox>
 				</form>
@@ -153,6 +208,6 @@ const Login = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-	Login_User: (inputValues) => dispatch(LoginUser(inputValues)),
+	Register_User: (inputValues) => dispatch(RegisterUser(inputValues)),
 });
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(null, mapDispatchToProps)(Register);

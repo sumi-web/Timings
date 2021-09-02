@@ -1,0 +1,133 @@
+#bio-box {
+	position: relative;
+	width: $width-col-12;
+	margin: 1rem auto 3rem auto;
+	padding: 0.5rem;
+	.bio-info {
+		@include applyFlex(column, flex-start, center);
+		width: 300px;
+		margin: 0 auto;
+		background-color: #fff;
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+		border-radius: 5px;
+		.avatar-box {
+			@include applyFlex(row, center, center);
+			width: 65px;
+			height: 65px;
+			border-radius: 50%;
+			background-color: darken($color-info, 15%);
+			margin: 1rem 0;
+			color: $white;
+			font-family: arial;
+			font-size: 3rem;
+		}
+
+		h4 {
+			margin: 0 0 $space-xmsmall 0;
+			color: $color-primary;
+			font-size: $font-large;
+		}
+		p {
+			margin: 0 0 $space-xmsmall 0;
+		}
+	}
+}
+
+#punch-box {
+	width: $width-col-12;
+	margin: 1rem auto 2rem auto;
+	.punch-container {
+		@include applyFlex(row, space-around, center);
+		width: 280px;
+		margin: 0 auto;
+
+		.punch-finger-box {
+			// @include applyFlex(row, center, center);
+			img {
+				height: 105px;
+				object-fit: contain;
+				-webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.2));
+				filter: drop-shadow(5px 5px 5px rgba(160, 60, 120, 0.3));
+				cursor: pointer;
+				&:active {
+					transform: scale(0.98);
+				}
+			}
+
+			p {
+				font-size: 1.1rem;
+				color: $color-primary;
+				text-align: center;
+			}
+		}
+
+		.show-time-box {
+			h6 {
+				font-size: 0.9rem;
+				color: $black-primary;
+				font-weight: 800;
+				margin: 5px 0;
+				text-align: center;
+			}
+
+			h4 {
+				font-size: 1.2rem;
+				color: $color-primary;
+				margin: 5px 0;
+				text-align: center;
+			}
+		}
+	}
+}
+
+#enter-time-box {
+	width: $width-col-12;
+	@include applyFlex(row, space-around, center);
+	.input-time-box {
+		label {
+			font-size: $font-small;
+			color: $black-primary;
+			font-weight: 500;
+		}
+		input[type="time"] {
+			background: rgba(160, 60, 120, 0.04);
+			border: none;
+			border-bottom: $space-xxmsall solid $color-light-gray;
+			display: block;
+			outline-offset: 3px;
+			padding: 0.8em 0.655em 0.8em 0.65em;
+			width: 120px;
+			// margin: 0.3rem 0.3rem 0.625rem 0.3rem;
+
+			&:focus {
+				outline: none;
+				background: rgba(160, 60, 120, 0.04);
+				border-bottom: $space-xxmsall solid $color-secondary;
+			}
+			// &::-webkit-datetime-edit-fields-wrapper {
+			// 	display: flex;
+			// }
+			&::-webkit-datetime-edit-text {
+				padding: 20px 5px;
+			}
+			// &::-webkit-datetime-edit-hour-field {
+			// 	padding: 15px 13px;
+			// }
+			// &::-webkit-datetime-edit-minute-field {
+			// 	padding: 19px 20px;
+			// }
+			// &::-webkit-datetime-edit-ampm-field {
+			// 	background-color: #715;
+			// 	border-radius: 15%;
+			// 	color: #fff;
+			// 	padding: 19px 13px;
+			// }
+			// &::-webkit-clear-button {
+			// 	display: none;
+			// }
+			// &::-webkit-inner-spin-button {
+			// 	display: none;
+			// }
+		}
+	}
+}

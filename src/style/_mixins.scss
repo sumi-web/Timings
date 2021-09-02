@@ -1,0 +1,68 @@
+@mixin applyFlex($direction, $justifyContent, $alignItems) {
+	display: flex;
+	flex-direction: $direction;
+	align-items: $alignItems;
+	justify-content: $justifyContent;
+}
+
+@mixin button-variant($fontSize, $color, $background, $border) {
+	/*button mixin start*/
+	color: $color;
+	background-color: $background;
+	border-color: $border;
+	outline: none;
+	font-size: $fontSize;
+	&:focus,
+	&.focus {
+		color: $color;
+		background-color: $background;
+		border-color: $border;
+	}
+	&:hover {
+		color: $color;
+		background-color: darken($background, 10%);
+		border-color: darken($border, 12%);
+	}
+	&:active,
+	&.active,
+	.open > &.dropdown-toggle {
+		color: $color;
+		background-color: darken($background, 10%);
+		border-color: darken($border, 12%);
+
+		&:hover,
+		&:focus,
+		&.focus {
+			color: $color;
+			background-color: darken($background, 15%);
+			border-color: darken($border, 25%);
+		}
+	}
+	&:active,
+	&.active,
+	&:active {
+		background-image: none;
+		transform: scale(0.98);
+	}
+	&.disabled,
+	&[disabled],
+	fieldset[disabled] & {
+		&:hover,
+		&:focus,
+		&.focus {
+			background-color: $background;
+			border-color: $border;
+		}
+	}
+
+	.badge {
+		color: $background;
+		background-color: $color;
+	}
+}
+
+@mixin borderRadius($radius) {
+	webkit-border-radius: $radius;
+	-moz-border-radius: $radius;
+	-ms-border-radius: $radius;
+}

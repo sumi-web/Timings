@@ -1,12 +1,10 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { connect } from "react-redux";
-
-import { Table } from "./HomeStyle";
 
 const TimeTable = (props) => {
 	return (
 		<>
-			<Table className="styled-table" color="secondary">
+			<table className="styled-table" color="secondary">
 				<thead>
 					<tr>
 						<th>Date</th>
@@ -14,6 +12,7 @@ const TimeTable = (props) => {
 						<th>Out-Time</th>
 						<th>Hour Done</th>
 						<th>Extra Time</th>
+						<th>Edit</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -21,7 +20,7 @@ const TimeTable = (props) => {
 						<WrappedComponent timeInfo={timeInfo} index={i} key={timeInfo.id} isWorkUnderNine={"-" === timeInfo.extraTime.slice(0, 1)} />
 					))}
 				</tbody>
-			</Table>
+			</table>
 		</>
 	);
 };
@@ -51,7 +50,7 @@ const WrappedComponent = ({ timeInfo, index, isWorkUnderNine }) => {
 			<td>{inTime}</td>
 			<td>{outTime}</td>
 			<td>{timeInfo.hourDone}</td>
-			<td style={isWorkUnderNine ? { color: "#F8485E" } : { color: "#93d9a3" }}>{timeInfo.extraTime}</td>
+			<td style={isWorkUnderNine ? { color: "#ff0000" } : { color: "#8cc152" }}>{timeInfo.extraTime}</td>
 		</tr>
 	);
 };

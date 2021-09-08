@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
+import { CreateEntryAndExitTimeBoth, CreateEntryTime, CreateExitTime } from "../action/timeAction";
 
 import Button from "./common-utility/Button";
-
-import { CreateEntryAndExitTimeBoth, CreateEntryOrExitTime } from "../action/timeAction";
 
 const EnterPunchTime = (props) => {
 	const today = new Date();
@@ -12,6 +11,8 @@ const EnterPunchTime = (props) => {
 		entry: "",
 		exit: "",
 	});
+
+	console.log("check props", props);
 
 	const setEntryTime = ({ target }) => {
 		// const timeStamp = new Date(today.getFullYear(), today.getMonth(), today.getDay(), target.value);
@@ -28,14 +29,13 @@ const EnterPunchTime = (props) => {
 		if (input.entry && !input.exit) {
 			// only entry time exit
 			const timeStamp = getTimeStamp(input.entry);
-			props.Create_Entry_Or_Exit_Time(timeStamp, "entry").then(() => {
+			props.Create_Entry_Time(timeStamp).then(() => {
 				setInputValues({ entry: "", exit: "" });
 			});
 		} else if (!input.entry && input.exit) {
 			// only exit time exist
-
 			const timeStamp = getTimeStamp(input.exit);
-			props.Create_Entry_Or_Exit_Time(timeStamp, "exit").then(() => {
+			props.Create_Exit_Time(timeStamp).then(() => {
 				setInputValues({ entry: "", exit: "" });
 			});
 		} else {
@@ -58,7 +58,18 @@ const EnterPunchTime = (props) => {
 		<div id="enter-time-box">
 			<div className="input-time-box">
 				<label>Enter Entry Time</label>
-				<input type="time" id="appt" name="entry" step="1" min="09:00" max="18:00" value={input.entry} onChange={setEntryTime} required />
+				<input
+					type="time"
+					id="appt"
+					name="entry"
+					step="1"
+					min="09:00"
+					max="18:00"
+					disabled={props.todayPunch.entry && props.todayPunch.exit}
+					value={input.entry}
+					onChange={setEntryTime}
+					required
+				/>
 			</div>
 			<div className="input-time-box">
 				<label>Enter Exit Time</label>
@@ -71,8 +82,12 @@ const EnterPunchTime = (props) => {
 	);
 };
 
+const mapStateToProps = (state) => ({
+	todayPunch: state.time_store.todayPunch,
+});
 const mapDispatchToProps = (dispatch) => ({
-	Create_Entry_Or_Exit_Time: (punchTime, punchType) => dispatch(CreateEntryOrExitTime(punchTime, punchType)),
+	Create_Exit_Time: (punchTime) => dispatch(CreateExitTime(punchTime)),
+	Create_Entry_Time: (punchTime) => dispatch(CreateEntryTime(punchTime)),
 	Create_Entry_And_Exit_Time_Both: (entryTime, exitTime) => dispatch(CreateEntryAndExitTimeBoth(entryTime, exitTime)),
 });
-export default connect(null, mapDispatchToProps)(EnterPunchTime);
+export default connect(mapStateToProps, mapDispatchToProps)(EnterPunchTime);

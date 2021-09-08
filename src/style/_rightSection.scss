@@ -80,3 +80,11 @@
 		}
 	}
 }
+
+.time-filter-header {
+	width: $width-col-12;
+	@include applyFlex(row, flex-end, center);
+	select {
+		margin: 0 20px;
+	}
+}

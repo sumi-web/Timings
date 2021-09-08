@@ -1,30 +1,50 @@
 import { db } from "../firebase";
-import { SET_USERS_TIME_LIST, SET_USER_WORK_TILL_NOW, SET_USER_YESTERDAY_AND_TODAY_PUNCH } from "./types";
+import { SET_DAY_ID, SET_USERS_TIME_LIST, SET_USER_WORK_TILL_NOW, SET_USER_YESTERDAY_AND_TODAY_PUNCH } from "./types";
 
 import { toast } from "react-toastify";
+import { batch } from "react-redux";
 
 /** @desc function for fetching user timing data from firebase */
 export const GetUserTimingData = () => (dispatch, getState) => {
 	const { user } = getState().auth_store;
 	const userId = user.id;
+	const currentDay = new Date();
 
 	db.collection(userId)
-		.orderBy("entry", "desc")
+		.orderBy("timeStamp", "desc")
+		.where("timeStamp", "<=", new Date(`${currentDay.getFullYear()}-${currentDay.getMonth() + 1}-31`))
+		.where("timeStamp", ">=", new Date(`${currentDay.getFullYear()}-${currentDay.getMonth() + 1}-01`))
 		.onSnapshot((querySnapshot) => {
 			const timeList = [];
-			let i = 0;
 			let totalHour = null;
 			let hour = 0;
 			let min = 0;
+			let index = 0;
 
 			querySnapshot.forEach((doc) => {
-				const day = doc.id;
-				const newDay = `${day.substring(0, 4)}-${day.substring(4, 6)}-${day.substring(6)}`;
+				let day = "";
 				let hourDone = null;
 				let extraTime = null;
 
+				// saving day as 01-01-2021 format
+				if (!!doc.data().entry || !!doc.data().exit) {
+					let punch = doc.data().entry || doc.data().exit;
+					day = _getPunchDate(punch);
+					day = `${day.substring(0, 2)}-${day.substring(2, 4)}-${day.substring(4)}`;
+				}
+
+				// checking if entry time already punched
+				if (index === 0 && !!doc.data().entry) {
+					// checking if entry time was of today
+					const entryTime = new Date(doc.data().entry);
+					if (currentDay.getDate() === entryTime.getDate()) {
+						dispatch({ type: SET_DAY_ID, id: doc.id });
+					}
+				}
 				// calc hour done using entry and exit time
 				if (!!doc.data().entry && !!doc.data().exit) {
+					debugger;
+
 					let ms = Math.abs(doc.data().entry - doc.data().exit);
 					hourDone = _msToTime(ms);
 					extraTime = _calculateExtraTime(hourDone);
@@ -34,9 +54,11 @@ export const GetUserTimingData = () => (dispatch, getState) => {
 					min += parseInt(splitHourDone[1]);
 				}
 
+				// calculate current month data
+
 				const timeData = {
-					id: Date.now() + i,
-					day: newDay,
+					id: doc.id,
+					day,
 					entry: doc.data().entry || "",
 					exit: doc.data().exit || "",
 					hourDone: hourDone || "",
@@ -44,51 +66,38 @@ export const GetUserTimingData = () => (dispatch, getState) => {
 				};
 
 				timeList.push(timeData);
-				i++;
+				index++;
 			});
 
-			dispatch({ type: SET_USERS_TIME_LIST, data: timeList });
-			dispatch({ type: SET_USER_WORK_TILL_NOW, data: { totalHour, hour, min } });
-			dispatch({ type: SET_USER_YESTERDAY_AND_TODAY_PUNCH });
+			batch(() => {
+				dispatch({ type: SET_USERS_TIME_LIST, data: timeList });
+				dispatch({ type: SET_USER_WORK_TILL_NOW, data: { totalHour, hour, min } });
+				dispatch({ type: SET_USER_YESTERDAY_AND_TODAY_PUNCH });
+				// dispatch({ type: "SET_CURRENT_MONTH_DATA", userId });
+			});
+			console.log("listener called");
 		});
 };
 
 /** @desc function saving entry and exit punch timing of user to firebase */
-export const CreateEntryOrExitTime = (punchTime, punchType) => (dispatch, getState) => {
-	const { auth_store, time_store } = getState();
-	const { user } = auth_store;
+export const CreateEntryTime = (punchTime) => (dispatch, getState) => {
+	const { user } = getState().auth_store;
 
 	const userId = user.id;
 
-	const today = _getPunchDate(punchTime);
-
-	if (!punchType) {
-		const { timeData } = time_store;
-
-		const isTimeAlreadyEntered = timeData.some((time) => {
-			if (time.day.replaceAll("-", "") === today) {
-				return !!time.entry;
-			}
-			return false;
-		});
-
-		punchType = isTimeAlreadyEntered ? "exit" : "entry";
-	}
-
-	// dispatch that you made changes to timeyarn
-
 	return db
 		.collection(userId)
-		.doc(today)
-		.set(
+		.add(
 			{
-				[punchType]: punchTime,
+				entry: punchTime,
+				userId,
 				timeStamp: new Date(),
 			},
 			{ merge: true }
 		)
-		.then(() => {
-			toast.success("successfully time added");
+		.then((data) => {
+			dispatch({ type: SET_DAY_ID, id: data.id });
+			toast.success("successfully entry time added");
 		})
 		.catch((error) => {
 			toast.error("error", error);
@@ -96,6 +105,35 @@ export const CreateEntryOrExitTime = (punchTime, punchType) => (dispatch, getSta
 		});
 };
 
+export const CreateExitTime = (punchTime) => (_, getState) => {
+	const {
+		auth_store: { user },
+		time_store: { selectedDayId },
+	} = getState();
+
+	const userId = user.id;
+
+	// could use update method here but lets just use this one
+	return db
+		.collection(userId)
+		.doc(selectedDayId)
+		.set(
+			{
+				exit: punchTime,
+			},
+			{ merge: true }
+		)
+		.then(() => {
+			toast.success("successfully exit time added");
+		})
+		.catch((error) => {
+			// The document probably doesn't exist.
+			toast.error("error on updating time");
+			console.error("Error updating document: ", error);
+		});
+};
+
+/** @desc function for saving entry and exit time together */
 export const CreateEntryAndExitTimeBoth = (entryTime, exitTime) => (dispatch, getState) => {
 	const { user } = getState().auth_store;
 
@@ -105,20 +143,22 @@ export const CreateEntryAndExitTimeBoth = (entryTime, exitTime) => (dispatch, ge
 
 	return db
 		.collection(userId)
-		.doc(today)
-		.set({
+		.add({
 			entry: entryTime,
 			exit: exitTime,
+			userId,
 			timeStamp: new Date(),
 		})
 		.then(() => {
 			toast.success("successfully time added");
 		})
 		.catch((error) => {
-			toast.error("error", error);
-			console.error("Error writing document: ", error);
+			toast.error("Error writing document: ", error);
+			console.log("error", error);
 		});
 };
+
+// update function incoming
 
 /** @desc helper function for getting today date */
 export const _getPunchDate = (punchTime) => {
@@ -126,7 +166,7 @@ export const _getPunchDate = (punchTime) => {
 	const year = `${date.getFullYear()}`;
 	const month = `${date.getMonth()}`.length === 1 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
 	const day = `${date.getDate()}`.length === 1 ? `0${date.getDate()}` : `${date.getDate()}`;
-	return year + month + day;
+	return day + month + year;
 };
 
 /** @desc helper function for converting ms to time */

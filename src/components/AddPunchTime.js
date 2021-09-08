@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { CreateEntryOrExitTime } from "../action/timeAction";
+import { CreateEntryTime, CreateExitTime } from "../action/timeAction";
 
 import fingerImg from "../assets/fingerprint-svgrepo-com.png";
-
-const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+import { monthList } from "../data";
 
 const ShowTime = (props) => {
 	const [date, setDate] = useState(new Date());
@@ -20,7 +19,13 @@ const ShowTime = (props) => {
 	}, []);
 
 	const submitTimeOnPunch = () => {
-		props.Create_Entry_Or_Exit_Time(date.getTime());
+		if (!props.selectedDayId) {
+			// creating entry time
+			props.Create_Entry_Time(date.getTime());
+		} else {
+			// creating exit time
+			props.Create_Exit_Time(date.getTime());
+		}
 	};
 
 	return (
@@ -37,7 +42,11 @@ const ShowTime = (props) => {
 	);
 };
 
-const mapDispatchToProps = (dispatch) => ({
-	Create_Entry_Or_Exit_Time: (punchType) => dispatch(CreateEntryOrExitTime(punchType, "")),
+const mapStateToProps = (state) => ({
+	selectedDayId: state.time_store.selectedDayId,
 });
-export default connect(null, mapDispatchToProps)(ShowTime);
+const mapDispatchToProps = (dispatch) => ({
+	Create_Exit_Time: (punchTime) => dispatch(CreateExitTime(punchTime)),
+	Create_Entry_Time: (punchTime) => dispatch(CreateEntryTime(punchTime)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(ShowTime);

@@ -84,8 +84,6 @@ const theme = {
 };
 
 const App = (props) => {
-	console.log("check props app", props);
-
 	useEffect(() => {
 		props.Get_User_Credentials();
 	}, []);
@@ -93,13 +91,23 @@ const App = (props) => {
 	return (
 		<>
 			<ThemeProvider theme={theme}>{props.showScreenLoader ? <LoadingScreen /> : <Routes />}</ThemeProvider>
-			<ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+			<ToastContainer
+				position="top-right"
+				autoClose={3000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
 		</>
 	);
 };
 
 const mapStateToProps = (state) => ({
-	showScreenLoader: state.common_store.showScreenLoader,
+	lastPunchTime: state.time_store.timeData[0],
 });
 const mapDispatchToProps = (dispatch) => ({
 	Get_User_Credentials: () => dispatch(GetUserCredentials()),

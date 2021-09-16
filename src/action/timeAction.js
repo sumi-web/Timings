@@ -1,4 +1,5 @@
 import { db } from "../firebase";
+import firebase from "firebase";
 import { SET_DAY_ID, SET_USERS_TIME_LIST, SET_USER_WORK_TILL_NOW, SET_USER_YESTERDAY_AND_TODAY_PUNCH } from "./types";
 
 import { toast } from "react-toastify";
@@ -27,10 +28,9 @@ export const GetUserTimingData = () => (dispatch, getState) => {
 				let extraTime = null;
 
 				// saving day as 01-01-2021 format
-				if (!!doc.data().entry || !!doc.data().exit) {
-					let punch = doc.data().entry || doc.data().exit;
-					day = _getPunchDate(punch);
-					day = `${day.substring(0, 2)}-${day.substring(2, 4)}-${day.substring(4)}`;
+				if (doc.data().timeStamp) {
+					const { seconds, nanoseconds } = doc.data().timeStamp;
+					day = _getDateFromTimeStamp(seconds, nanoseconds);
 				}
 
 				// checking if entry time already punched
@@ -43,8 +43,6 @@ export const GetUserTimingData = () => (dispatch, getState) => {
 				}
 				// calc hour done using entry and exit time
 				if (!!doc.data().entry && !!doc.data().exit) {
-					debugger;
-
 					let ms = Math.abs(doc.data().entry - doc.data().exit);
 					hourDone = _msToTime(ms);
 					extraTime = _calculateExtraTime(hourDone);
@@ -74,8 +72,8 @@ export const GetUserTimingData = () => (dispatch, getState) => {
 				dispatch({ type: SET_USER_WORK_TILL_NOW, data: { totalHour, hour, min } });
 				dispatch({ type: SET_USER_YESTERDAY_AND_TODAY_PUNCH });
 				// dispatch({ type: "SET_CURRENT_MONTH_DATA", userId });
+				FillLeftTimingsData()(dispatch, getState);
 			});
-			console.log("listener called");
 		});
 };
 
@@ -134,28 +132,51 @@ export const CreateExitTime = (punchTime) => (_, getState) => {
 };
 
 /** @desc function for saving entry and exit time together */
-export const CreateEntryAndExitTimeBoth = (entryTime, exitTime) => (dispatch, getState) => {
-	const { user } = getState().auth_store;
+export const CreateEntryAndExitTimeBoth =
+	(entryTime, exitTime, absentReason = "", timeStamp = firebase.firestore.FieldValue.serverTimestamp()) =>
+	(dispatch, getState) => {
+		const { user } = getState().auth_store;
 
-	const userId = user.id;
+		const userId = user.id;
 
-	const today = _getPunchDate(entryTime);
+		return db
+			.collection(userId)
+			.add({
+				entry: entryTime,
+				exit: exitTime,
+				userId,
+				absentReason,
+				timeStamp,
+			})
+			.then(() => {
+				toast.success("successfully time added");
+			})
+			.catch((error) => {
+				toast.error("Error writing document: ", error);
+				console.log("error", error);
+			});
+	};
 
-	return db
-		.collection(userId)
-		.add({
-			entry: entryTime,
-			exit: exitTime,
-			userId,
-			timeStamp: new Date(),
-		})
-		.then(() => {
-			toast.success("successfully time added");
-		})
-		.catch((error) => {
-			toast.error("Error writing document: ", error);
-			console.log("error", error);
-		});
+/** @desc function for filling all left data by user like absent or sunday */
+export const FillLeftTimingsData = () => (dispatch, getState) => {
+	const { timeData } = getState().time_store;
+	const lastPunchTime = timeData[0];
+
+	const currentDate = new Date();
+	const lastPunchDay = new Date(lastPunchTime.entry || lastPunchTime.exit);
+	// fill when last punch
+	if (lastPunchDay.getDate() < currentDate.getDate()) {
+		for (let i = lastPunchDay.getDate() + 1; i < currentDate.getDate(); i++) {
+			let absentReason = "leave";
+			const date = new Date(`${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${i}`);
+			// absent reason sunday if day is 7
+			if (date.getDay() === 7) {
+				absentReason = "sunday";
+			}
+
+			CreateEntryAndExitTimeBoth("", "", absentReason, date)(dispatch, getState);
+		}
+	}
 };
 
 // update function incoming
@@ -180,6 +201,12 @@ const _msToTime = (duration) => {
 	seconds = seconds < 10 ? "0" + seconds : seconds;
 
 	return hours + ":" + minutes + ":" + seconds;
+};
+
+const _getDateFromTimeStamp = (sec, nanoSec) => {
+	const miliSeconds = (sec + nanoSec / 1000000000) * 1000;
+	const date = _getPunchDate(miliSeconds);
+	return `${date.substring(0, 2)}-${date.substring(2, 4)}-${date.substring(4)}`;
 };
 
 /** @desc helper function for calculating extra time */

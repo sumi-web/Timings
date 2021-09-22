@@ -1,17 +1,10 @@
-import {
-	ADD_PUNCH_TIME_DATA,
-	SET_DAY_ID,
-	SET_USERS_TIME_LIST,
-	SET_USER_TIME_DATA,
-	SET_USER_WORK_TILL_NOW,
-	SET_USER_YESTERDAY_AND_TODAY_PUNCH,
-} from "../action/types";
+import { ADD_EXIT_TIME_DATA, ADD_PUNCH_TIME_DATA, SET_DAY_ID, SET_USERS_TIME_LIST, SET_USER_TIME_DATA, SET_USER_WORK_TILL_NOW, SET_USER_YESTERDAY_AND_TODAY_PUNCH } from "../action/types";
 import { _getPunchDate } from "../action/timeAction";
 import { db } from "../firebase";
 
 const INITIAL_STATE = {
 	timeData: [],
-	totalWorkDone: {},
+	totalWorkDone: { hour: 0, min: 0 },
 	yesterdayPunch: {
 		entry: "",
 		exit: "",
@@ -46,11 +39,21 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 			let ms = Math.abs(action.userData.entry - action.userData.exit);
 			hourDone = _msToTime(ms);
 			extraTime = _calculateExtraTime(hourDone);
-			newState.totalHour += 9;
 			const splitHourDone = hourDone.split(":");
 			hour += parseInt(splitHourDone[0]);
 			min += parseInt(splitHourDone[1]);
+			if (min > 60) {
+				hour += min / 60;
+				min += min % 60;
+			}
+
+			hour = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
+			min = min.toString().length === 1 ? `0${min}` : `${min} `;
+			newState.totalWorkDone.hour += hour;
+			newState.totalWorkDone.min += min;
 		}
+
+		newState.totalHour += 9;
 
 		const timeInfo = {
 			id: action.docId,
@@ -70,7 +73,38 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 			}
 		}
 
-		console.log("check time data", newState.timeData);
+		return newState;
+	}
+
+	if (action.type === ADD_EXIT_TIME_DATA) {
+		newState.timeData = state.timeData.map((doc) => {
+			if (doc.id === state.selectedDayId) {
+				doc.exit = action.exitTime;
+				if (!!doc.entry && !!doc.exit) {
+					let ms = Math.abs(doc.entry - action.exitTime);
+					let hourDone = _msToTime(ms);
+					let extraTime = _calculateExtraTime(hourDone);
+					const splitHourDone = hourDone.split(":");
+					let hour = parseInt(splitHourDone[0]);
+					let min = parseInt(splitHourDone[1]);
+					if (min > 60) {
+						hour += min / 60;
+						min += min % 60;
+					}
+
+					hour = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
+					min = min.toString().length === 1 ? `0${min}` : `${min} `;
+					newState.totalWorkDone.hour += hour;
+					newState.totalWorkDone.min += min;
+					doc.hourDone = hourDone;
+					doc.extraTime = extraTime;
+				}
+			}
+
+			return doc;
+		});
+
+		newState.selectedDayId = "";
 		return newState;
 	}
 

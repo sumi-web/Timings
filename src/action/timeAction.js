@@ -1,6 +1,6 @@
 import { db } from "../firebase";
 import firebase from "firebase";
-import { ADD_PUNCH_TIME_DATA, SET_DAY_ID, SET_USERS_TIME_LIST, SET_USER_TIME_DATA, SET_USER_WORK_TILL_NOW, SET_USER_YESTERDAY_AND_TODAY_PUNCH } from "./types";
+import { ADD_EXIT_TIME_DATA, ADD_PUNCH_TIME_DATA, SET_DAY_ID, SET_USERS_TIME_LIST, SET_USER_TIME_DATA, SET_USER_WORK_TILL_NOW, SET_USER_YESTERDAY_AND_TODAY_PUNCH } from "./types";
 
 import { toast } from "react-toastify";
 import { batch } from "react-redux";
@@ -41,9 +41,24 @@ export const CreateEntryTime = (punchTime) => (dispatch, getState) => {
 		.add({
 			entry: punchTime,
 			userId,
-			timeStamp: new Date(),
+			timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
 		})
 		.then((data) => {
+			const docRef = db.collection(userId).doc(data.id);
+			docRef
+				.get()
+				.then((doc) => {
+					if (doc.exists) {
+						dispatch({ type: SET_USER_TIME_DATA, docId: doc.id, userData: doc.data() });
+					} else {
+						// doc.data() will be undefined in this case
+						console.log("No such document!");
+					}
+				})
+				.catch((error) => {
+					console.log("error getting the doc:", error);
+				});
+
 			dispatch({ type: SET_DAY_ID, id: data.id });
 			toast.success("successfully entry time added");
 		})
@@ -53,7 +68,8 @@ export const CreateEntryTime = (punchTime) => (dispatch, getState) => {
 		});
 };
 
-export const CreateExitTime = (punchTime) => (_, getState) => {
+export const CreateExitTime = (punchTime) => (dispatch, getState) => {
+	debugger;
 	const {
 		auth_store: { user },
 		time_store: { selectedDayId },
@@ -72,6 +88,7 @@ export const CreateExitTime = (punchTime) => (_, getState) => {
 			{ merge: true }
 		)
 		.then(() => {
+			dispatch({ type: ADD_EXIT_TIME_DATA, exitTime: punchTime });
 			toast.success("successfully exit time added");
 		})
 		.catch((error) => {

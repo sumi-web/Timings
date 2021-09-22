@@ -24,6 +24,7 @@ const EnterPunchTime = (props) => {
 	};
 
 	const submitTime = () => {
+		// dont submit empty data
 		if (!input.entry && !input.exit) return;
 
 		if (input.entry && !input.exit) {

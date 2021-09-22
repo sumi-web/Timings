@@ -16,11 +16,11 @@ const RightSection = (props) => {
 					<div className="timing-details">
 						<div>
 							<p className="time-title">Enter Time</p>
-							<p className="time-info">{props.yesterdayPunch.entry}</p>
+							<p className="time-info">{props.yesterdayPunch.entry || "00:00:00"}</p>
 						</div>
 						<div>
 							<p className="time-title">Exit Time</p>
-							<p className="time-info">{props.yesterdayPunch.exit}</p>
+							<p className="time-info">{props.yesterdayPunch.exit || "00:00:00"}</p>
 						</div>
 					</div>
 				</div>
@@ -30,11 +30,11 @@ const RightSection = (props) => {
 					<div className="timing-details">
 						<div>
 							<p className="timing-title">Total hour</p>
-							<p className="time-info">{props.totalHour}:HH</p>
+							<p className="time-info">{props.totalHour}:00 HH</p>
 						</div>
 						<div>
 							<p className="timing-title">Work Till Now</p>
-							<p className="time-info">{`${props.hourWork}:${props.minWork}`}</p>
+							<p className="time-info">{`${props.hourWork}:${props.minWork}:${props.secWork}`}</p>
 						</div>
 					</div>
 				</div>
@@ -44,11 +44,11 @@ const RightSection = (props) => {
 					<div className="timing-details">
 						<div>
 							<p className="time-title">Enter Time</p>
-							<p className="time-info">{props.todayPunch.entry}</p>
+							<p className="time-info">{props.todayPunch.entry || "00:00:00"}</p>
 						</div>
 						<div>
 							<p className="time-title">Exit Time</p>
-							<p className="time-info">{props.todayPunch.exit}</p>
+							<p className="time-info">{props.todayPunch.exit || "00:00:00"}</p>
 						</div>
 					</div>
 				</div>
@@ -65,8 +65,9 @@ const RightSection = (props) => {
 				<select>
 					<option value="random">All</option>
 					<option value="random">Absent</option>
-					<option value="random">less</option>
-					<option value="random">more</option>
+					<option value="random">Present</option>
+					<option value="random">Holiday</option>
+					<option value="random">Sunday</option>
 				</select>
 			</div>
 			<div id="time-table-box">
@@ -82,5 +83,6 @@ const mapStateToProps = (state) => ({
 	yesterdayPunch: state.time_store.yesterdayPunch,
 	minWork: state.time_store.totalWorkDone?.min ?? "",
 	hourWork: state.time_store.totalWorkDone?.hour ?? "",
+	secWork: state.time_store.totalWorkDone?.sec ?? "",
 });
 export default connect(mapStateToProps)(RightSection);

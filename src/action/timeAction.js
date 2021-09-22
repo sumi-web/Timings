@@ -1,6 +1,14 @@
 import { db } from "../firebase";
 import firebase from "firebase";
-import { ADD_EXIT_TIME_DATA, ADD_PUNCH_TIME_DATA, SET_DAY_ID, SET_USERS_TIME_LIST, SET_USER_TIME_DATA, SET_USER_WORK_TILL_NOW, SET_USER_YESTERDAY_AND_TODAY_PUNCH } from "./types";
+import {
+	ADD_EXIT_PUNCH_TIME_DATA,
+	ADD_PUNCH_TIME_DATA,
+	SET_DAY_ID,
+	SET_USERS_TIME_LIST,
+	SET_USER_TIME_DATA,
+	SET_USER_WORK_TILL_NOW,
+	SET_USER_YESTERDAY_AND_TODAY_PUNCH,
+} from "./types";
 
 import { toast } from "react-toastify";
 import { batch } from "react-redux";
@@ -41,6 +49,7 @@ export const CreateEntryTime = (punchTime) => (dispatch, getState) => {
 		.add({
 			entry: punchTime,
 			userId,
+			absentReason: "",
 			timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
 		})
 		.then((data) => {
@@ -88,7 +97,7 @@ export const CreateExitTime = (punchTime) => (dispatch, getState) => {
 			{ merge: true }
 		)
 		.then(() => {
-			dispatch({ type: ADD_EXIT_TIME_DATA, exitTime: punchTime });
+			dispatch({ type: ADD_EXIT_PUNCH_TIME_DATA, exitTime: punchTime });
 			toast.success("successfully exit time added");
 		})
 		.catch((error) => {
@@ -144,11 +153,11 @@ export const FillLeftTimingsData = () => (dispatch, getState) => {
 	const { timeData } = getState().time_store;
 
 	if (timeData.length !== 0) {
+		const currentDate = new Date();
 		const lastPunchTime = timeData[0];
 
 		const swappedLastPunchDay = `${lastPunchTime.day.substring(3, 5)}-${lastPunchTime.day.substring(0, 2)}-${lastPunchTime.day.substring(6)}`;
 
-		const currentDate = new Date();
 		const lastPunchDay = new Date(swappedLastPunchDay);
 
 		// fill when last punch

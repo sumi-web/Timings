@@ -17,7 +17,7 @@ const TimeTable = (props) => {
 				</thead>
 				<tbody>
 					{props.timeData.map((timeInfo, i) => (
-						<WrappedComponent timeInfo={timeInfo} index={i} key={timeInfo.id} isWorkUnderNine={"-" === timeInfo.extraTime.slice(0, 1)} />
+						<WrappedComponent timeInfo={timeInfo} index={i} key={timeInfo.id} />
 					))}
 				</tbody>
 			</table>
@@ -50,7 +50,16 @@ const WrappedComponent = ({ timeInfo, index, isWorkUnderNine }) => {
 			<td>{inTime}</td>
 			<td>{outTime}</td>
 			<td>{timeInfo.hourDone}</td>
-			<td style={isWorkUnderNine ? { color: "#ff0000" } : { color: "#8cc152" }}>{timeInfo.extraTime}</td>
+			<td
+				style={
+					timeInfo.extraTime.slice(0, 1) === "+" ? { color: "#8cc152" } : timeInfo.extraTime.slice(0, 1) === "-" ? { color: "#ff0000" } : { color: "#a03c78" }
+				}
+			>
+				{timeInfo.extraTime}
+			</td>
+			<td className="edit-icon">
+				<i className="fa fa-pencil-square-o" aria-hidden="true"></i>
+			</td>
 		</tr>
 	);
 };

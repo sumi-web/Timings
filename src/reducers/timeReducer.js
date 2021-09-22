@@ -1,10 +1,18 @@
-import { ADD_EXIT_TIME_DATA, ADD_PUNCH_TIME_DATA, SET_DAY_ID, SET_USERS_TIME_LIST, SET_USER_TIME_DATA, SET_USER_WORK_TILL_NOW, SET_USER_YESTERDAY_AND_TODAY_PUNCH } from "../action/types";
+import {
+	ADD_EXIT_PUNCH_TIME_DATA,
+	ADD_PUNCH_TIME_DATA,
+	SET_DAY_ID,
+	SET_USERS_TIME_LIST,
+	SET_USER_TIME_DATA,
+	SET_USER_WORK_TILL_NOW,
+	SET_USER_YESTERDAY_AND_TODAY_PUNCH,
+} from "../action/types";
 import { _getPunchDate } from "../action/timeAction";
 import { db } from "../firebase";
 
 const INITIAL_STATE = {
 	timeData: [],
-	totalWorkDone: { hour: 0, min: 0 },
+	totalWorkDone: { hour: 0, min: 0, sec: 0 },
 	yesterdayPunch: {
 		entry: "",
 		exit: "",
@@ -25,8 +33,6 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 		let day = "";
 		let hourDone = null;
 		let extraTime = null;
-		let hour = 0;
-		let min = 0;
 
 		if (action.userData.timeStamp) {
 			const { seconds, nanoseconds } = action.userData.timeStamp;
@@ -36,24 +42,30 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 
 		// calculate hour done using entry and exit time
 		if (!!action.userData.entry && !!action.userData.exit) {
+			let hour = +state.totalWorkDone.hour;
+			let min = +state.totalWorkDone.min;
+			let sec = +state.totalWorkDone.sec;
+
 			let ms = Math.abs(action.userData.entry - action.userData.exit);
 			hourDone = _msToTime(ms);
 			extraTime = _calculateExtraTime(hourDone);
+			// calculating total work done till now
 			const splitHourDone = hourDone.split(":");
 			hour += parseInt(splitHourDone[0]);
 			min += parseInt(splitHourDone[1]);
-			if (min > 60) {
-				hour += min / 60;
-				min += min % 60;
-			}
+			sec += parseInt(splitHourDone[2]);
 
-			hour = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
-			min = min.toString().length === 1 ? `0${min}` : `${min} `;
-			newState.totalWorkDone.hour += hour;
-			newState.totalWorkDone.min += min;
+			const { totalHour, totalMin, totalSec } = _calculateTotalWork(hour, min, sec);
+
+			newState.totalWorkDone.hour = totalHour;
+			newState.totalWorkDone.min = totalMin;
+			newState.totalWorkDone.sec = totalSec;
 		}
 
-		newState.totalHour += 9;
+		// add day work if not absent or any holiday or sunday
+		if (!action.absentReason) {
+			newState.totalHour += 9;
+		}
 
 		const timeInfo = {
 			id: action.docId,
@@ -76,26 +88,28 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 		return newState;
 	}
 
-	if (action.type === ADD_EXIT_TIME_DATA) {
+	if (action.type === ADD_EXIT_PUNCH_TIME_DATA) {
 		newState.timeData = state.timeData.map((doc) => {
 			if (doc.id === state.selectedDayId) {
 				doc.exit = action.exitTime;
 				if (!!doc.entry && !!doc.exit) {
+					let hour = +state.totalWorkDone.hour;
+					let min = +state.totalWorkDone.min;
+					let sec = +state.totalWorkDone.sec;
+
 					let ms = Math.abs(doc.entry - action.exitTime);
 					let hourDone = _msToTime(ms);
 					let extraTime = _calculateExtraTime(hourDone);
 					const splitHourDone = hourDone.split(":");
-					let hour = parseInt(splitHourDone[0]);
-					let min = parseInt(splitHourDone[1]);
-					if (min > 60) {
-						hour += min / 60;
-						min += min % 60;
-					}
+					hour += parseInt(splitHourDone[0]);
+					min += parseInt(splitHourDone[1]);
+					sec += parseInt(splitHourDone[2]);
+					const { totalHour, totalMin, totalSec } = _calculateTotalWork(hour, min, sec);
 
-					hour = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
-					min = min.toString().length === 1 ? `0${min}` : `${min} `;
-					newState.totalWorkDone.hour += hour;
-					newState.totalWorkDone.min += min;
+					newState.totalWorkDone.hour = totalHour;
+					newState.totalWorkDone.min = totalMin;
+					newState.totalWorkDone.sec = totalSec;
+
 					doc.hourDone = hourDone;
 					doc.extraTime = extraTime;
 				}
@@ -209,8 +223,9 @@ const _calculateExtraTime = (hourDone) => {
 	let splitMin = parseInt(splitHourDone[1]);
 	let splitSec = parseInt(splitHourDone[2]);
 	let extraHour = "";
-	let extraMin = (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
-	let extraSec = (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
+
+	let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
+	let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
 
 	// work done in only min
 	if (splitHour === 0) {
@@ -226,7 +241,27 @@ const _calculateExtraTime = (hourDone) => {
 		extraHour = (splitHour - 9).toString().length === 1 ? `0${splitHour - 9}` : splitHour - 9;
 		return `${extraHour}:${extraMin}:${extraSec}`;
 	} else {
-		// extra minutes work done
-		return `+00:${extraMin}:${extraMin}`;
+		// when no extra min and sec done
+		if (splitMin === 0 && splitSec === 0) {
+			return `00:${extraMin}:${extraSec}`;
+		}
+		// extra work done in either min or sec
+		return `+00:${extraMin}:${extraSec}`;
 	}
+};
+
+const _calculateTotalWork = (hour, min, sec) => {
+	if (sec > 60) {
+		min += parseInt(sec / 60);
+		sec = sec % 60;
+	}
+	if (min > 60) {
+		hour += parseInt(min / 60);
+		min = min % 60;
+	}
+
+	let totalHour = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
+	let totalMin = min.toString().length === 1 ? `0${min}` : `${min} `;
+	let totalSec = sec.toString().length === 1 ? `0${sec}` : `${sec}`;
+	return { totalHour, totalMin, totalSec };
 };

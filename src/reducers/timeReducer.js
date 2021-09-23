@@ -224,23 +224,30 @@ const _calculateExtraTime = (hourDone) => {
 	let splitSec = parseInt(splitHourDone[2]);
 	let extraHour = "";
 
-	let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
-	let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
-
 	// work done in only min
 	if (splitHour === 0) {
+		let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
+		let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
 		return `-08:${extraMin}:${extraSec}`;
 	}
 
 	// work done under 9 hour
 	if (Math.sign(splitHour - 9) === -1) {
-		extraHour = (splitHour - 9).toString().length === 1 ? `0${splitHour - 9}` : splitHour - 9;
+		let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
+		let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
+		extraHour = (splitHour - 8).toString() === "0" ? `-0${splitHour - 8}` : splitHour - 8;
 		return `${extraHour}:${extraMin}:${extraSec}`;
+		// work above 9 hour
 	} else if (Math.sign(splitHour - 9) === +1) {
 		// work over 9 hour
+		let extraMin = splitMin === 0 ? "00" : splitMin.toString().length === 1 ? `0${splitMin}` : splitMin;
+		let extraSec = splitSec === 0 ? "00" : splitSec.toString().length === 1 ? `0${splitSec}` : splitSec;
+
 		extraHour = (splitHour - 9).toString().length === 1 ? `0${splitHour - 9}` : splitHour - 9;
 		return `${extraHour}:${extraMin}:${extraSec}`;
 	} else {
+		let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
+		let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
 		// when no extra min and sec done
 		if (splitMin === 0 && splitSec === 0) {
 			return `00:${extraMin}:${extraSec}`;

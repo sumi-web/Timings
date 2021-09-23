@@ -34,7 +34,7 @@ const RightSection = (props) => {
 						</div>
 						<div>
 							<p className="timing-title">Work Till Now</p>
-							<p className="time-info">{`${props.hourWork}:${props.minWork}:${props.secWork}`}</p>
+							<p className="time-info">{`${props.hourWork}:${props.minWork}:${props.secWork}`}HH</p>
 						</div>
 					</div>
 				</div>

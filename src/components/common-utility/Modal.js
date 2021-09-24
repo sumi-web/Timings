@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { Portal } from "../Portal";
 
-export default function Modal(props) {
-	const [active, setActive] = React.useState(false);
-	const { open, onClose, locked } = props;
-	const backdrop = React.useRef(null);
+export default function Modal({ open, onClose, locked, children }) {
+	const backdrop = useRef(null);
+	const [active, setActive] = useState(false);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const { current } = backdrop;
 
 		const transitionEnd = () => setActive(open);
@@ -42,14 +41,14 @@ export default function Modal(props) {
 	}, [open, locked, onClose]);
 
 	return (
-		<React.Fragment>
+		<>
 			{(open || active) && (
 				<Portal className="modal-portal">
 					<div ref={backdrop} className={active && open && "active"}>
-						<div className="modal-content">{props.children}</div>
+						<div className="modal-content">{children}</div>
 					</div>
 				</Portal>
 			)}
-		</React.Fragment>
+		</>
 	);
 }

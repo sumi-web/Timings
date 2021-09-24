@@ -31,9 +31,12 @@ const TimeTable = (props) => {
 				}}
 				open={isOpen}
 			>
-				<p>I'm a modal window, I use portal so I only exist when I'm open.</p>
-				<p>Also tabbing is locked inside me go ahead and try tabbing to the button behind me.</p>
-				<p style={{ textAlign: "center" }}>
+				<div className="modal-body">
+					<h1>Edit Your Time()</h1>
+					<i class="fa fa-times" aria-hidden="true"></i>
+				</div>
+
+				{/* <p style={{ textAlign: "center" }}>
 					<button
 						onClick={() => {
 							setIsOpen(false);
@@ -41,7 +44,7 @@ const TimeTable = (props) => {
 					>
 						Close
 					</button>
-				</p>
+				</p> */}
 			</Modal>
 		</>
 	);
@@ -72,7 +75,13 @@ const WrappedComponent = ({ timeInfo, index, toggleModal }) => {
 			<td>{inTime}</td>
 			<td>{outTime}</td>
 			<td>{timeInfo.hourDone}</td>
-			<td style={timeInfo.extraTime.slice(0, 1) === "+" ? { color: "#8cc152" } : timeInfo.extraTime.slice(0, 1) === "-" ? { color: "#ff0000" } : { color: "#a03c78" }}>{timeInfo.extraTime}</td>
+			<td
+				style={
+					timeInfo.extraTime.slice(0, 1) === "+" ? { color: "#8cc152" } : timeInfo.extraTime.slice(0, 1) === "-" ? { color: "#ff0000" } : { color: "#a03c78" }
+				}
+			>
+				{timeInfo.extraTime}
+			</td>
 			<td className="edit-icon">
 				<i className="fa fa-pencil-square-o" aria-hidden="true" onClick={toggleModal}></i>
 			</td>

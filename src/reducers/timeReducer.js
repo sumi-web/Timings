@@ -57,13 +57,15 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 
 			const { totalHour, totalMin, totalSec } = _calculateTotalWork(hour, min, sec);
 
+			console.log("check min work");
+
 			newState.totalWorkDone.hour = totalHour;
 			newState.totalWorkDone.min = totalMin;
 			newState.totalWorkDone.sec = totalSec;
 		}
 
 		// add day work if not absent or any holiday or sunday
-		if (!action.absentReason) {
+		if (!action.userData.absentReason) {
 			newState.totalHour += 9;
 		}
 
@@ -76,7 +78,6 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 			extraTime: extraTime || "",
 		};
 
-		newState.timeData = [timeInfo, ...state.timeData];
 		// when entry time exit for current day
 		if (!!timeInfo.entry && !timeInfo.exit) {
 			const entryTime = new Date(timeInfo.entry);
@@ -84,6 +85,8 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 				newState.selectedDayId = timeInfo.id;
 			}
 		}
+
+		newState.timeData = [timeInfo, ...state.timeData];
 
 		return newState;
 	}
@@ -119,26 +122,14 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 		});
 
 		newState.selectedDayId = "";
+		const exitTime = new Date(action.exitTime);
+		newState.todayPunch.exit = exitTime.toLocaleTimeString();
+
 		return newState;
 	}
 
 	if (action.type === SET_USERS_TIME_LIST) {
 		newState.timeData = action.data;
-		return newState;
-	}
-
-	if (action.type === SET_USER_WORK_TILL_NOW) {
-		newState.totalHour = action.data.totalHour;
-		let hour = action.data.hour;
-		let min = action.data.min;
-		if (min > 60) {
-			hour += min / 60;
-			min += min % 60;
-		}
-
-		hour = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
-		min = min.toString().length === 1 ? `0${min}` : `${min} `;
-		newState.totalWorkDone = { hour, min };
 		return newState;
 	}
 

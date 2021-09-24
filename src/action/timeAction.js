@@ -6,7 +6,6 @@ import {
 	SET_DAY_ID,
 	SET_USERS_TIME_LIST,
 	SET_USER_TIME_DATA,
-	SET_USER_WORK_TILL_NOW,
 	SET_USER_YESTERDAY_AND_TODAY_PUNCH,
 } from "./types";
 
@@ -78,7 +77,6 @@ export const CreateEntryTime = (punchTime) => (dispatch, getState) => {
 };
 
 export const CreateExitTime = (punchTime) => (dispatch, getState) => {
-	debugger;
 	const {
 		auth_store: { user },
 		time_store: { selectedDayId },
@@ -160,7 +158,7 @@ export const FillLeftTimingsData = () => (dispatch, getState) => {
 
 		const lastPunchDay = new Date(swappedLastPunchDay);
 
-		// fill when last punch
+		// fill after last punch date
 		if (lastPunchDay.getDate() < currentDate.getDate()) {
 			for (let i = lastPunchDay.getDate() + 1; i < currentDate.getDate(); i++) {
 				let absentReason = "leave";

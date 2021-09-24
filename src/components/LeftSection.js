@@ -10,6 +10,7 @@ const LeftSection = (props) => {
 		<>
 			<div id="bio-box">
 				<div className="bio-info">
+					<i class="fa fa-cog" aria-hidden="true"></i>
 					{/* <img src="" alt="" /> */}
 					<div className="avatar-box">{props.user.name.slice(0, 1)}</div>
 

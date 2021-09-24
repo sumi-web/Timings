@@ -75,6 +75,10 @@
 
 				td {
 					padding: 10px 13px;
+					& > i {
+						color: $color-dark-gray;
+						cursor: pointer;
+					}
 				}
 			}
 		}

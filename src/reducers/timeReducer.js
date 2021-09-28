@@ -1,6 +1,7 @@
 import {
 	ADD_EXIT_PUNCH_TIME_DATA,
 	ADD_PUNCH_TIME_DATA,
+	EDIT_PUNCHED_TIME_DATA,
 	SET_DAY_ID,
 	SET_USERS_TIME_LIST,
 	SET_USER_TIME_DATA,
@@ -23,6 +24,7 @@ const INITIAL_STATE = {
 	},
 	totalHour: 0,
 	selectedDayId: "",
+	toEditTimeData: {},
 };
 
 export const timeReducer = (state = INITIAL_STATE, action) => {
@@ -76,6 +78,7 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 			exit: action.userData.exit || "",
 			hourDone: hourDone || "",
 			extraTime: extraTime || "",
+			absentReason: action.userData.absentReason,
 		};
 
 		// when entry time exit for current day
@@ -166,6 +169,15 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 		return newState;
 	}
 
+	if (action.type === EDIT_PUNCHED_TIME_DATA) {
+		if (Object.keys(state.toEditTimeData).length > 0) {
+			newState.toEditTimeData = {};
+		}
+
+		newState.toEditTimeData = state.timeData.find((time) => time.id === action.id);
+		return newState;
+	}
+
 	return state;
 };
 
@@ -235,16 +247,21 @@ const _calculateExtraTime = (hourDone) => {
 		let extraSec = splitSec === 0 ? "00" : splitSec.toString().length === 1 ? `0${splitSec}` : splitSec;
 
 		extraHour = (splitHour - 9).toString().length === 1 ? `0${splitHour - 9}` : splitHour - 9;
-		return `${extraHour}:${extraMin}:${extraSec}`;
+		return `+${extraHour}:${extraMin}:${extraSec}`;
 	} else {
-		let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
-		let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
-		// when no extra min and sec done
-		if (splitMin === 0 && splitSec === 0) {
-			return `00:${extraMin}:${extraSec}`;
-		}
 		// extra work done in either min or sec
-		return `+00:${extraMin}:${extraSec}`;
+		if (splitHour - 9 === 0) {
+			let extraMin = splitMin === 0 ? "00" : splitMin.toString().length === 1 ? `0${splitMin}` : splitMin;
+			let extraSec = splitSec === 0 ? "00" : splitSec.toString().length === 1 ? `0${splitSec}` : splitSec;
+			return `+00:${extraMin}:${extraSec}`;
+		} else {
+			let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
+			let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
+			// when no extra min and sec done
+			if (splitMin === 0 && splitSec === 0) {
+				return `00:${extraMin}:${extraSec}`;
+			}
+		}
 	}
 };
 

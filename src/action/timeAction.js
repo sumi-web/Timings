@@ -3,6 +3,7 @@ import firebase from "firebase";
 import {
 	ADD_EXIT_PUNCH_TIME_DATA,
 	ADD_PUNCH_TIME_DATA,
+	EDIT_PUNCHED_TIME_DATA,
 	SET_DAY_ID,
 	SET_USERS_TIME_LIST,
 	SET_USER_TIME_DATA,
@@ -173,6 +174,9 @@ export const FillLeftTimingsData = () => (dispatch, getState) => {
 		}
 	}
 };
+
+/**** edit time actions  */
+export const EditPunchedTimeData = (id) => ({ type: EDIT_PUNCHED_TIME_DATA, id });
 
 // update function incoming
 

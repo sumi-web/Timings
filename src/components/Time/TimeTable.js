@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
-
-import Modal from "./common-utility/Modal";
+import { EditPunchedTimeData } from "../../action/timeAction";
+import EditPunchedTime from "./EditPunchedTime";
 
 const TimeTable = (props) => {
-	const [isOpen, setIsOpen] = React.useState(false);
+	const [isOpen, setIsOpen] = useState(false);
+
+	const openModal = (id) => {
+		props.Edit_Punched_Time_Data(id);
+		setIsOpen(true);
+	};
+
+	const closeModal = () => [setIsOpen(false)];
 
 	return (
 		<>
@@ -21,31 +28,11 @@ const TimeTable = (props) => {
 				</thead>
 				<tbody>
 					{props.timeData.map((timeInfo, i) => (
-						<WrappedComponent timeInfo={timeInfo} index={i} key={timeInfo.id} toggleModal={() => setIsOpen(!isOpen)} />
+						<WrappedComponent timeInfo={timeInfo} index={i} key={timeInfo.id} openModal={openModal} />
 					))}
 				</tbody>
 			</table>
-			<Modal
-				onClose={() => {
-					setIsOpen(false);
-				}}
-				open={isOpen}
-			>
-				<div className="modal-body">
-					<h1>Edit Your Time()</h1>
-					<i class="fa fa-times" aria-hidden="true"></i>
-				</div>
-
-				{/* <p style={{ textAlign: "center" }}>
-					<button
-						onClick={() => {
-							setIsOpen(false);
-						}}
-					>
-						Close
-					</button>
-				</p> */}
-			</Modal>
+			<EditPunchedTime isOpen={isOpen} closeModal={closeModal} />
 		</>
 	);
 };
@@ -53,9 +40,12 @@ const TimeTable = (props) => {
 const mapStateToProps = (state) => ({
 	timeData: state.time_store.timeData,
 });
-export default connect(mapStateToProps)(TimeTable);
+const mapDispatchToProps = (dispatch) => ({
+	Edit_Punched_Time_Data: (id) => dispatch(EditPunchedTimeData(id)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(TimeTable);
 
-const WrappedComponent = ({ timeInfo, index, toggleModal }) => {
+const WrappedComponent = ({ timeInfo, index, openModal }) => {
 	let inTime = "";
 	let outTime = "";
 
@@ -83,7 +73,7 @@ const WrappedComponent = ({ timeInfo, index, toggleModal }) => {
 				{timeInfo.extraTime}
 			</td>
 			<td className="edit-icon">
-				<i className="fa fa-pencil-square-o" aria-hidden="true" onClick={toggleModal}></i>
+				<i className="fa fa-pencil-square-o" aria-hidden="true" onClick={() => openModal(timeInfo.id)}></i>
 			</td>
 		</tr>
 	);

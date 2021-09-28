@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { LogOutUser } from "../action/authAction";
+import { LogOutUser } from "../../action/authAction";
 
 import AddPunchTime from "./AddPunchTime";
 import EnterPunchTime from "./EnterPunchTime";

@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import { connect } from "react-redux";
 
-import TimeTable from "../components/TimeTable";
+import TimeTable from "./TimeTable";
 
-import { monthList } from "../data";
+import { monthList } from "../../data";
 
 const RightSection = (props) => {
 	const date_ref = useRef(new Date());

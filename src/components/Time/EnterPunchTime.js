@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { CreateEntryAndExitTimeBoth, CreateEntryTime, CreateExitTime } from "../action/timeAction";
+import { CreateEntryAndExitTimeBoth, CreateEntryTime, CreateExitTime } from "../../action/timeAction";
 
-import Button from "./common-utility/Button";
+import Button from "../common-utility/Button";
 
 const EnterPunchTime = (props) => {
 	const today = new Date();
@@ -12,7 +12,7 @@ const EnterPunchTime = (props) => {
 		exit: "",
 	});
 
-	console.log("check props", props);
+	console.log("check input", input);
 
 	const setEntryTime = ({ target }) => {
 		// const timeStamp = new Date(today.getFullYear(), today.getMonth(), today.getDay(), target.value);

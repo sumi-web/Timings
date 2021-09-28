@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { CreateEntryTime, CreateExitTime } from "../action/timeAction";
+import { CreateEntryTime, CreateExitTime } from "../../action/timeAction";
 
-import fingerImg from "../assets/fingerprint-svgrepo-com.png";
-import { monthList } from "../data";
+import fingerImg from "../../assets/fingerprint-svgrepo-com.png";
+import { monthList } from "../../data";
 
 const ShowTime = (props) => {
 	const [date, setDate] = useState(new Date());

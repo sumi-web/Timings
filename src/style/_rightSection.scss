@@ -88,6 +88,7 @@
 
 .time-filter-header {
 	width: $width-col-12;
+	margin-top: 1rem;
 	@include applyFlex(row, flex-end, center);
 	select {
 		margin: 0 20px;
@@ -102,14 +103,14 @@
 		position: absolute;
 		top: -15px;
 		right: -10px;
-		color: $color-dark-gray;
-		font-size: 1.4rem;
+		color: #444;
+		font-size: 1.5rem;
 		cursor: pointer;
 	}
 	h1 {
 		font-size: 1.5rem;
 		margin: 0 0 2rem 0;
-		color: $black-primary;
+		color: $color-primary;
 	}
 
 	label {

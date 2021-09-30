@@ -7,8 +7,8 @@ const TimeTable = (props) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const openModal = (id) => {
-		props.Edit_Punched_Time_Data(id);
 		setIsOpen(true);
+		props.Edit_Punched_Time_Data(id);
 	};
 
 	const closeModal = () => [setIsOpen(false)];
@@ -23,6 +23,7 @@ const TimeTable = (props) => {
 						<th>Out-Time</th>
 						<th>Hour Done</th>
 						<th>Extra Time</th>
+						<th>Absent Reason</th>
 						<th>Edit</th>
 					</tr>
 				</thead>
@@ -72,6 +73,7 @@ const WrappedComponent = ({ timeInfo, index, openModal }) => {
 			>
 				{timeInfo.extraTime}
 			</td>
+			<td>{timeInfo?.absentReason && timeInfo.absentReason.charAt(0).toUpperCase() + timeInfo.absentReason.slice(1)}</td>
 			<td className="edit-icon">
 				<i className="fa fa-pencil-square-o" aria-hidden="true" onClick={() => openModal(timeInfo.id)}></i>
 			</td>

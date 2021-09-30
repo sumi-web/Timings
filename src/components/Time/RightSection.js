@@ -53,9 +53,6 @@ const RightSection = (props) => {
 					</div>
 				</div>
 			</div>
-			<div className="graph-data-box">
-				<p>user graph data here </p>
-			</div>
 
 			<div className="time-filter-header">
 				<select>

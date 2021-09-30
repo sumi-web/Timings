@@ -86,6 +86,7 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 			const entryTime = new Date(timeInfo.entry);
 			if (currentDay.getDate() === entryTime.getDate()) {
 				newState.selectedDayId = timeInfo.id;
+				newState.todayPunch.entry = entryTime.toLocaleTimeString();
 			}
 		}
 
@@ -174,7 +175,22 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 			newState.toEditTimeData = {};
 		}
 
-		newState.toEditTimeData = state.timeData.find((time) => time.id === action.id);
+		const editTime = state.timeData.find((time) => time.id === action.id);
+
+		const timeCopy = { ...editTime };
+
+		if (!!timeCopy.entry) {
+			const entryPunchTime = new Date(timeCopy.entry);
+			timeCopy.entry = entryPunchTime.toLocaleTimeString("en-GB");
+		}
+
+		if (!!timeCopy.exit) {
+			const exitPunchTime = new Date(timeCopy.exit);
+			timeCopy.exit = exitPunchTime.toLocaleTimeString("en-GB");
+		}
+
+		newState.toEditTimeData = timeCopy;
+
 		return newState;
 	}
 

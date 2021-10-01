@@ -7,11 +7,11 @@ import Modal from "../common-utility/Modal";
 
 const EditPunchedTime = ({ isOpen, closeModal, ...props }) => {
 	const [input, setInputValues] = useState({
-		entry: props.toEditTimeData.entry || "",
-		exit: props.toEditTimeData.exit || "",
+		entry: "",
+		exit: "",
 	});
 
-	const [absentReason, setAbsentReason] = useState(props.toEditTimeData.absentReason || "");
+	const [absentReason, setAbsentReason] = useState("");
 
 	console.log("check outside values", input);
 

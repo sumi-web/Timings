@@ -103,7 +103,7 @@
 		position: absolute;
 		top: -15px;
 		right: -10px;
-		color: #444;
+		color: $color-primary;
 		font-size: 1.5rem;
 		cursor: pointer;
 	}
@@ -128,14 +128,39 @@
 	button {
 		font-size: 1.2rem;
 		margin: 0 0 1rem 0;
+		&:disabled,
+		&[disabled] {
+			opacity: 0.7;
+		}
 	}
 
-	select {
-		width: 150px;
-		height: 30px;
-		&:active {
-			outline: none;
-			border: 2px solid $color-secondary;
+	.edit-absent-box {
+		position: relative;
+		font-family: Arial, Helvetica, sans-serif;
+		@include applyFlex(column, center, flex-start);
+		label {
+			color: $black-primary;
+			font-weight: 500 !important;
+			margin: 0 0 0.1rem 0 !important;
+			font-size: $font-small;
+		}
+		select {
+			font-size: 1rem;
+			padding: 0.5rem 4rem 0.5rem 0.5rem;
+			background-color: #fff;
+			color: $color-dark-gray;
+			border: 1px solid #444;
+			cursor: pointer;
+			border-radius: 3px;
+			&:focus-within {
+				outline: none;
+				border: 0;
+				border-radius: 3px;
+			}
+
+			&:focus {
+				border: 1px solid $color-secondary;
+			}
 		}
 	}
 }

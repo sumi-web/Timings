@@ -2,10 +2,9 @@ import { db } from "../firebase";
 import firebase from "firebase";
 import {
 	ADD_EXIT_PUNCH_TIME_DATA,
-	ADD_PUNCH_TIME_DATA,
 	EDIT_PUNCHED_TIME_DATA,
 	SET_DAY_ID,
-	SET_USERS_TIME_LIST,
+	SET_USER_EDITED_TIME_DATA,
 	SET_USER_TIME_DATA,
 	SET_USER_YESTERDAY_AND_TODAY_PUNCH,
 } from "./types";
@@ -25,9 +24,6 @@ export const GetUserTimingData = () => (dispatch, getState) => {
 		.get()
 		.then((querySnapshot) => {
 			querySnapshot.forEach((doc) => {
-				// let hourDone = null;
-				// let extraTime = null;
-
 				dispatch({ type: SET_USER_TIME_DATA, docId: doc.id, userData: doc.data() });
 			});
 
@@ -177,6 +173,37 @@ export const FillLeftTimingsData = () => (dispatch, getState) => {
 
 /**** edit time actions  */
 export const EditPunchedTimeData = (id) => ({ type: EDIT_PUNCHED_TIME_DATA, id });
+
+export const UpdateEditedPunchedData = (entry, exit, absentReason) => (dispatch, getState) => {
+	const {
+		auth_store: { user },
+		time_store: { toEditTimeData },
+	} = getState();
+
+	const userId = user.id;
+	const docId = toEditTimeData.id;
+
+	return db
+		.collection(userId)
+		.doc(docId)
+		.update({
+			entry,
+			exit,
+			absentReason,
+		})
+		.then(() => {
+			batch(() => {
+				dispatch({ type: SET_USER_EDITED_TIME_DATA, entry, exit, absentReason });
+				dispatch({ type: SET_USER_YESTERDAY_AND_TODAY_PUNCH });
+			});
+
+			toast.success("successfully time added");
+		})
+		.catch((error) => {
+			toast.error("Error writing document: ", error);
+			console.log("error", error);
+		});
+};
 
 // update function incoming
 

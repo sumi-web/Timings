@@ -4,8 +4,8 @@ import {
 	EDIT_PUNCHED_TIME_DATA,
 	SET_DAY_ID,
 	SET_USERS_TIME_LIST,
+	SET_USER_EDITED_TIME_DATA,
 	SET_USER_TIME_DATA,
-	SET_USER_WORK_TILL_NOW,
 	SET_USER_YESTERDAY_AND_TODAY_PUNCH,
 } from "../action/types";
 import { _getPunchDate } from "../action/timeAction";
@@ -58,8 +58,6 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 			sec += parseInt(splitHourDone[2]);
 
 			const { totalHour, totalMin, totalSec } = _calculateTotalWork(hour, min, sec);
-
-			console.log("check min work");
 
 			newState.totalWorkDone.hour = totalHour;
 			newState.totalWorkDone.min = totalMin;
@@ -190,6 +188,60 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 		}
 
 		newState.toEditTimeData = timeCopy;
+
+		return newState;
+	}
+
+	if (action.type === SET_USER_EDITED_TIME_DATA) {
+		let totalDayHours = null;
+		if (Object.keys(state.toEditTimeData).length > 0) {
+			newState.timeData = state.timeData.map((time) => {
+				if (!time.absentReason) {
+					totalDayHours += 9;
+				}
+
+				if (time.id === state.toEditTimeData.id) {
+					if (!!action.entry && !!action.exit) {
+						// calc total work done
+						let hour = +state.totalWorkDone.hour;
+						let min = +state.totalWorkDone.min;
+						let sec = +state.totalWorkDone.sec;
+
+						let ms = Math.abs(action.entry - action.exit);
+						let hourDone = _msToTime(ms);
+						let extraTime = _calculateExtraTime(hourDone);
+						// calculating total work done till now
+						const splitHourDone = hourDone.split(":");
+						hour += parseInt(splitHourDone[0]);
+						min += parseInt(splitHourDone[1]);
+						sec += parseInt(splitHourDone[2]);
+
+						const { totalHour, totalMin, totalSec } = _calculateTotalWork(hour, min, sec);
+
+						newState.totalWorkDone.hour = totalHour;
+						newState.totalWorkDone.min = totalMin;
+						newState.totalWorkDone.sec = totalSec;
+
+						return { ...time, entry: action.entry, exit: action.exit, absentReason: action.absentReason, extraTime, hourDone };
+					}
+
+					if (!action.absentReason) {
+						totalDayHours += 9;
+					}
+
+					return { ...time, entry: action.entry, exit: action.exit, absentReason: action.absentReason };
+				}
+
+				return { ...time };
+			});
+		}
+
+		// do total work done
+		if (totalDayHours) {
+			newState.totalHour = totalDayHours;
+		}
+
+		newState.toEditTimeData = {};
 
 		return newState;
 	}

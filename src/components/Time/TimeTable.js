@@ -6,12 +6,18 @@ import EditPunchedTime from "./EditPunchedTime";
 const TimeTable = (props) => {
 	const [isOpen, setIsOpen] = useState(false);
 
+	const [isLocked, setIsLocked] = useState(true);
+
 	const openModal = (id) => {
 		setIsOpen(true);
+		setIsLocked(true);
 		props.Edit_Punched_Time_Data(id);
 	};
 
-	const closeModal = () => [setIsOpen(false)];
+	const closeModal = () => {
+		setIsLocked(false);
+		setIsOpen(false);
+	};
 
 	return (
 		<>
@@ -33,7 +39,7 @@ const TimeTable = (props) => {
 					))}
 				</tbody>
 			</table>
-			<EditPunchedTime isOpen={isOpen} closeModal={closeModal} />
+			<EditPunchedTime isLocked={isLocked} isOpen={isOpen} closeModal={closeModal} />
 		</>
 	);
 };

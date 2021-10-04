@@ -13,8 +13,6 @@ const EditPunchedTime = ({ isOpen, isLocked, closeModal, ...props }) => {
 		exit: "",
 	});
 
-	console.log("check input", input);
-
 	const [absentReason, setAbsentReason] = useState("");
 
 	const [isLoading, setIsLoading] = useState(false);

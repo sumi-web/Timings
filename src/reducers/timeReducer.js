@@ -1,10 +1,11 @@
 import {
 	ADD_EXIT_PUNCH_TIME_DATA,
 	ADD_PUNCH_TIME_DATA,
+	EDIT_PUNCHED_TIME_DATA,
 	SET_DAY_ID,
 	SET_USERS_TIME_LIST,
+	SET_USER_EDITED_TIME_DATA,
 	SET_USER_TIME_DATA,
-	SET_USER_WORK_TILL_NOW,
 	SET_USER_YESTERDAY_AND_TODAY_PUNCH,
 } from "../action/types";
 import { _getPunchDate } from "../action/timeAction";
@@ -23,6 +24,7 @@ const INITIAL_STATE = {
 	},
 	totalHour: 0,
 	selectedDayId: "",
+	toEditTimeData: {},
 };
 
 export const timeReducer = (state = INITIAL_STATE, action) => {
@@ -63,7 +65,7 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 		}
 
 		// add day work if not absent or any holiday or sunday
-		if (!action.absentReason) {
+		if (!action.userData.absentReason) {
 			newState.totalHour += 9;
 		}
 
@@ -74,16 +76,19 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 			exit: action.userData.exit || "",
 			hourDone: hourDone || "",
 			extraTime: extraTime || "",
+			absentReason: action.userData.absentReason,
 		};
 
-		newState.timeData = [timeInfo, ...state.timeData];
 		// when entry time exit for current day
 		if (!!timeInfo.entry && !timeInfo.exit) {
 			const entryTime = new Date(timeInfo.entry);
 			if (currentDay.getDate() === entryTime.getDate()) {
 				newState.selectedDayId = timeInfo.id;
+				newState.todayPunch.entry = entryTime.toLocaleTimeString();
 			}
 		}
+
+		newState.timeData = [timeInfo, ...state.timeData];
 
 		return newState;
 	}
@@ -119,26 +124,14 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 		});
 
 		newState.selectedDayId = "";
+		const exitTime = new Date(action.exitTime);
+		newState.todayPunch.exit = exitTime.toLocaleTimeString();
+
 		return newState;
 	}
 
 	if (action.type === SET_USERS_TIME_LIST) {
 		newState.timeData = action.data;
-		return newState;
-	}
-
-	if (action.type === SET_USER_WORK_TILL_NOW) {
-		newState.totalHour = action.data.totalHour;
-		let hour = action.data.hour;
-		let min = action.data.min;
-		if (min > 60) {
-			hour += min / 60;
-			min += min % 60;
-		}
-
-		hour = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
-		min = min.toString().length === 1 ? `0${min}` : `${min} `;
-		newState.totalWorkDone = { hour, min };
 		return newState;
 	}
 
@@ -172,6 +165,84 @@ export const timeReducer = (state = INITIAL_STATE, action) => {
 
 	if (action.type === SET_DAY_ID) {
 		newState.selectedDayId = action.id;
+		return newState;
+	}
+
+	if (action.type === EDIT_PUNCHED_TIME_DATA) {
+		if (Object.keys(state.toEditTimeData).length > 0) {
+			newState.toEditTimeData = {};
+		}
+
+		const editTime = state.timeData.find((time) => time.id === action.id);
+
+		const timeCopy = { ...editTime };
+
+		if (!!timeCopy.entry) {
+			const entryPunchTime = new Date(timeCopy.entry);
+			timeCopy.entry = entryPunchTime.toLocaleTimeString("en-GB");
+		}
+
+		if (!!timeCopy.exit) {
+			const exitPunchTime = new Date(timeCopy.exit);
+			timeCopy.exit = exitPunchTime.toLocaleTimeString("en-GB");
+		}
+
+		newState.toEditTimeData = timeCopy;
+
+		return newState;
+	}
+
+	if (action.type === SET_USER_EDITED_TIME_DATA) {
+		let totalDayHours = null;
+		if (Object.keys(state.toEditTimeData).length > 0) {
+			newState.timeData = state.timeData.map((time) => {
+				if (!time.absentReason) {
+					totalDayHours += 9;
+				}
+
+				if (time.id === state.toEditTimeData.id) {
+					if (!!action.entry && !!action.exit) {
+						// calc total work done
+						let hour = +state.totalWorkDone.hour;
+						let min = +state.totalWorkDone.min;
+						let sec = +state.totalWorkDone.sec;
+
+						let ms = Math.abs(action.entry - action.exit);
+						let hourDone = _msToTime(ms);
+						let extraTime = _calculateExtraTime(hourDone);
+						// calculating total work done till now
+						const splitHourDone = hourDone.split(":");
+						hour += parseInt(splitHourDone[0]);
+						min += parseInt(splitHourDone[1]);
+						sec += parseInt(splitHourDone[2]);
+
+						const { totalHour, totalMin, totalSec } = _calculateTotalWork(hour, min, sec);
+
+						newState.totalWorkDone.hour = totalHour;
+						newState.totalWorkDone.min = totalMin;
+						newState.totalWorkDone.sec = totalSec;
+
+						return { ...time, entry: action.entry, exit: action.exit, absentReason: action.absentReason, extraTime, hourDone };
+					}
+
+					if (!action.absentReason) {
+						totalDayHours += 9;
+					}
+
+					return { ...time, entry: action.entry, exit: action.exit, absentReason: action.absentReason };
+				}
+
+				return { ...time };
+			});
+		}
+
+		// do total work done
+		if (totalDayHours) {
+			newState.totalHour = totalDayHours;
+		}
+
+		newState.toEditTimeData = {};
+
 		return newState;
 	}
 
@@ -224,29 +295,41 @@ const _calculateExtraTime = (hourDone) => {
 	let splitSec = parseInt(splitHourDone[2]);
 	let extraHour = "";
 
-	let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
-	let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
-
 	// work done in only min
 	if (splitHour === 0) {
+		let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
+		let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
 		return `-08:${extraMin}:${extraSec}`;
 	}
 
 	// work done under 9 hour
 	if (Math.sign(splitHour - 9) === -1) {
-		extraHour = (splitHour - 9).toString().length === 1 ? `0${splitHour - 9}` : splitHour - 9;
+		let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
+		let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
+		extraHour = (splitHour - 8).toString() === "0" ? `-0${splitHour - 8}` : splitHour - 8;
 		return `${extraHour}:${extraMin}:${extraSec}`;
+		// work above 9 hour
 	} else if (Math.sign(splitHour - 9) === +1) {
 		// work over 9 hour
+		let extraMin = splitMin === 0 ? "00" : splitMin.toString().length === 1 ? `0${splitMin}` : splitMin;
+		let extraSec = splitSec === 0 ? "00" : splitSec.toString().length === 1 ? `0${splitSec}` : splitSec;
+
 		extraHour = (splitHour - 9).toString().length === 1 ? `0${splitHour - 9}` : splitHour - 9;
-		return `${extraHour}:${extraMin}:${extraSec}`;
+		return `+${extraHour}:${extraMin}:${extraSec}`;
 	} else {
-		// when no extra min and sec done
-		if (splitMin === 0 && splitSec === 0) {
-			return `00:${extraMin}:${extraSec}`;
-		}
 		// extra work done in either min or sec
-		return `+00:${extraMin}:${extraSec}`;
+		if (splitHour - 9 === 0) {
+			let extraMin = splitMin === 0 ? "00" : splitMin.toString().length === 1 ? `0${splitMin}` : splitMin;
+			let extraSec = splitSec === 0 ? "00" : splitSec.toString().length === 1 ? `0${splitSec}` : splitSec;
+			return `+00:${extraMin}:${extraSec}`;
+		} else {
+			let extraMin = splitMin === 0 ? "00" : (60 - splitMin).toString().length === 1 ? `0${60 - splitMin}` : 60 - splitMin;
+			let extraSec = splitSec === 0 ? "00" : (60 - splitSec).toString().length === 1 ? `0${60 - splitSec}` : 60 - splitSec;
+			// when no extra min and sec done
+			if (splitMin === 0 && splitSec === 0) {
+				return `00:${extraMin}:${extraSec}`;
+			}
+		}
 	}
 };
 

@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 
-import LeftSection from "../components/LeftSection";
-import RightSection from "../components/RightSection";
+import LeftSection from "../components/Time/LeftSection";
+import RightSection from "../components/Time/RightSection";
 
 import { GetUserTimingData } from "../action/timeAction";
 import { LogOutUser } from "../action/authAction";

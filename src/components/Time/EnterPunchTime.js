@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { CreateEntryAndExitTimeBoth, CreateEntryTime, CreateExitTime } from "../action/timeAction";
+import { CreateEntryAndExitTimeBoth, CreateEntryTime, CreateExitTime } from "../../action/timeAction";
 
-import Button from "./common-utility/Button";
+import { toast } from "react-toastify";
+
+import Button from "../common-utility/Button";
 
 const EnterPunchTime = (props) => {
 	const today = new Date();
@@ -12,7 +14,7 @@ const EnterPunchTime = (props) => {
 		exit: "",
 	});
 
-	console.log("check props", props);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const setEntryTime = ({ target }) => {
 		// const timeStamp = new Date(today.getFullYear(), today.getMonth(), today.getDay(), target.value);
@@ -24,20 +26,26 @@ const EnterPunchTime = (props) => {
 	};
 
 	const submitTime = () => {
+		if (props.todayPunch.entry && props.todayPunch.exit) {
+			toast.warn("time already punched for today");
+			return;
+		}
 		// dont submit empty data
 		if (!input.entry && !input.exit) return;
-
+		setIsLoading(true);
 		if (input.entry && !input.exit) {
 			// only entry time exit
 			const timeStamp = getTimeStamp(input.entry);
 			props.Create_Entry_Time(timeStamp).then(() => {
 				setInputValues({ entry: "", exit: "" });
+				setIsLoading(false);
 			});
 		} else if (!input.entry && input.exit) {
 			// only exit time exist
 			const timeStamp = getTimeStamp(input.exit);
 			props.Create_Exit_Time(timeStamp).then(() => {
 				setInputValues({ entry: "", exit: "" });
+				setIsLoading(false);
 			});
 		} else {
 			// when both time exit
@@ -45,6 +53,7 @@ const EnterPunchTime = (props) => {
 			const exitTimeStamp = getTimeStamp(input.exit);
 			props.Create_Entry_And_Exit_Time_Both(entryTimeStamp, exitTimeStamp).then(() => {
 				setInputValues({ entry: "", exit: "" });
+				setIsLoading(false);
 			});
 		}
 	};
@@ -74,10 +83,21 @@ const EnterPunchTime = (props) => {
 			</div>
 			<div className="input-time-box">
 				<label>Enter Exit Time</label>
-				<input type="time" id="appt" name="exit" step="1" min="09:00" max="18:00" value={input.exit} onChange={setExitTime} required></input>
+				<input
+					type="time"
+					id="appt"
+					name="exit"
+					step="1"
+					min="09:00"
+					max="18:00"
+					disabled={props.todayPunch.entry && props.todayPunch.exit}
+					value={input.exit}
+					onChange={setExitTime}
+					required
+				></input>
 			</div>
-			<Button variant="primary" size="small" style={{ marginTop: "20px" }} disabled={false} onClick={submitTime}>
-				Submit
+			<Button variant="primary" size="small" style={{ marginTop: "20px" }} disabled={isLoading} onClick={submitTime}>
+				{isLoading ? <i className="fa fa-spinner fa-pulse fa-fw"></i> : "Submit"}
 			</Button>
 		</div>
 	);

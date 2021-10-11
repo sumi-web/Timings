@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { LogOutUser } from "../action/authAction";
+import { LogOutUser } from "../../action/authAction";
 
 import AddPunchTime from "./AddPunchTime";
 import EnterPunchTime from "./EnterPunchTime";
@@ -10,6 +10,7 @@ const LeftSection = (props) => {
 		<>
 			<div id="bio-box">
 				<div className="bio-info">
+					<i class="fa fa-cog" aria-hidden="true"></i>
 					{/* <img src="" alt="" /> */}
 					<div className="avatar-box">{props.user.name.slice(0, 1)}</div>
 

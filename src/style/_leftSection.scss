@@ -4,12 +4,14 @@
 	margin: 1rem auto 3rem auto;
 	padding: 0.5rem;
 	.bio-info {
+		position: relative;
 		@include applyFlex(column, flex-start, center);
 		width: 300px;
 		margin: 0 auto;
 		background-color: #fff;
 		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
 		border-radius: 5px;
+		padding: 0.5rem 0;
 		.avatar-box {
 			@include applyFlex(row, center, center);
 			width: 65px;
@@ -20,6 +22,15 @@
 			color: $white;
 			font-family: arial;
 			font-size: 3rem;
+		}
+
+		i {
+			position: absolute;
+			right: 5px;
+			top: 5px;
+			cursor: pointer;
+			color: $color-dark-gray;
+			font-size: 1.1rem;
 		}
 
 		h4 {
@@ -128,6 +139,11 @@
 			// &::-webkit-inner-spin-button {
 			// 	display: none;
 			// }
+		}
+
+		button:disabled,
+		button[disabled] {
+			opacity: 0.7;
 		}
 	}
 }

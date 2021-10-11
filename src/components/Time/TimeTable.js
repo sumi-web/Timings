@@ -79,7 +79,9 @@ const WrappedComponent = ({ timeInfo, index, openModal }) => {
 			>
 				{timeInfo.extraTime}
 			</td>
-			<td>{timeInfo?.absentReason && timeInfo.absentReason.charAt(0).toUpperCase() + timeInfo.absentReason.slice(1)}</td>
+			<td style={timeInfo.absentReason === "" ? { color: "#a03c78" } : timeInfo.absentReason === "leave" ? { color: "#4fc1e9" } : { color: "#fcbb42" }}>
+				{timeInfo.absentReason === "" ? "Present" : timeInfo.absentReason.charAt(0).toUpperCase() + timeInfo.absentReason.slice(1)}
+			</td>
 			<td className="edit-icon">
 				<i className="fa fa-pencil-square-o" aria-hidden="true" onClick={() => openModal(timeInfo.id)}></i>
 			</td>

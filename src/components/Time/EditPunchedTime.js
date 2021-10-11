@@ -113,7 +113,10 @@ const EditPunchedTime = ({ isOpen, isLocked, closeModal, ...props }) => {
 					variant="secondary"
 					size="small"
 					style={{ marginTop: "20px" }}
-					disabled={isLoading || props.toEditTimeData.entry === input.entry || props.toEditTimeData.exit === input.exit}
+					disabled={
+						isLoading ||
+						(props.toEditTimeData.entry === input.entry && props.toEditTimeData.exit === input.exit && props.toEditTimeData.absentReason === absentReason)
+					}
 					onClick={submitEditedTime}
 				>
 					{isLoading ? <i className="fa fa-spinner fa-pulse fa-fw"></i> : "Submit"}

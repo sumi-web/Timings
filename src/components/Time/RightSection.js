@@ -1,12 +1,14 @@
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import { connect } from "react-redux";
 
 import TimeTable from "./TimeTable";
 
-import { monthList } from "../../data";
+import { monthList, sortAbsent, sortMonth } from "../../data";
 
 const RightSection = (props) => {
 	const date_ref = useRef(new Date());
+
+	// const [] = useState();
 
 	return (
 		<>
@@ -56,15 +58,18 @@ const RightSection = (props) => {
 
 			<div className="time-filter-header">
 				<select>
-					<option value="current-month">Current Month</option>
-					<option value="current-month">Last Month</option>
+					{sortMonth.map((option) => (
+						<option key={option.id} value={option.value}>
+							{option.name}
+						</option>
+					))}
 				</select>
 				<select>
-					<option value="random">All</option>
-					<option value="random">Absent</option>
-					<option value="random">Present</option>
-					<option value="random">Holiday</option>
-					<option value="random">Sunday</option>
+					{sortAbsent.map((option) => (
+						<option key={option.id} value={option.value}>
+							{option.name}
+						</option>
+					))}
 				</select>
 			</div>
 			<div id="time-table-box">
